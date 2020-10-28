@@ -2,27 +2,19 @@
 
 namespace Star\GameEngine\View\Grid;
 
+use Assert\Assertion;
 use function chr;
 
-final class AlphabeticHeader implements GridHeader
+final class AlphabeticHeader implements HeaderIdStrategy
 {
-    /**
-     * @var int
-     */
-    private $count;
-
-    public function __construct(int $count)
-    {
-        $this->count = $count;
-    }
-
-    public function maximumCount(): int
-    {
-        return $this->count;
-    }
-
     public function generateId(int $position): string
     {
+        Assertion::between(
+            $position,
+            1,
+            26,
+            'Alphabetic header position "%s" must be between "%s" and "%s".'
+        );
         return chr(64 + $position); // 65:A => 90:Z
     }
 }

@@ -6,6 +6,7 @@ use Star\Component\DomainEvent\DomainEvent;
 use Star\Component\DomainEvent\EventListener;
 use Star\Component\DomainEvent\EventPublisher;
 use Star\GameEngine\Engine;
+use function func_get_args;
 
 final class EnginePublisher implements EventPublisher
 {
@@ -21,7 +22,15 @@ final class EnginePublisher implements EventPublisher
 
     public function subscribe(EventListener $listener): void
     {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+        foreach ($listener->listensTo() as $event => $method) {
+            $this->engine->addListener(
+                $event,
+                function () use ($listener, $method) {
+                    return $listener->{$method}(...func_get_args());
+                },
+                0
+            );
+        }
     }
 
     public function publish(DomainEvent $event): void
@@ -29,8 +38,13 @@ final class EnginePublisher implements EventPublisher
         $this->engine->dispatchEvent($event);
     }
 
+    /**
+     * @param DomainEvent[] $events
+     */
     public function publishChanges(array $events): void
     {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+        foreach ($events as $event) {
+            $this->publish($event);
+        }
     }
 }

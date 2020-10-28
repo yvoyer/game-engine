@@ -14,6 +14,11 @@ final class StringToken implements GameToken
         $this->value = $value;
     }
 
+    public function toString(): string
+    {
+        return $this->value;
+    }
+
     public static function fromString(string $token): GameToken
     {
         return new self($token);

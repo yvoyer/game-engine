@@ -1,14 +1,23 @@
 <?php declare(strict_types=1);
 
-namespace Star\Component\GameEngine\Extension\Logging;
+namespace Star\GameEngine\Extension\Logging;
 
 use Star\GameEngine\Messaging\EngineObserver;
-use Symfony\Contracts\EventDispatcher\Event;
+use Star\GameEngine\Messaging\Event\GameEvent;
 
 final class CollectMessages implements EngineObserver
 {
-    public function notifyListenerDispatch(callable $listener, Event $event): void
+    /**
+     * @var string[]
+     */
+    private $messages = [];
+
+    public function notifyListenerDispatch(callable $listener, GameEvent $event): void
     {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+        $this->messages[] = $event->toString();
+    }
+
+    public function getMessages(): array {
+        return $this->messages;
     }
 }

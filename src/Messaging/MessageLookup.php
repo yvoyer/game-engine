@@ -2,7 +2,8 @@
 
 namespace Star\GameEngine\Messaging;
 
-use Star\GameEngine\GamePlugin;
+use Star\GameEngine\Extension\GamePlugin;
+use Star\GameEngine\GameVisitor;
 
 final class MessageLookup implements GameVisitor {
     /**
@@ -25,7 +26,7 @@ final class MessageLookup implements GameVisitor {
 
     public function visitQueryHandler(string $query, callable $handler): void
     {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+        $this->messages[] = $query;
     }
 
     public function visitListener(string $event, string $listener): void

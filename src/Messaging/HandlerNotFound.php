@@ -7,10 +7,10 @@ use function sprintf;
 
 final class HandlerNotFound extends RuntimeException
 {
-    public function __construct(string $command)
+    public function __construct(string $message)
     {
         parent::__construct(
-            sprintf('No command handler was found for command "%s".', $command)
+            sprintf('No message handler was found for message "%s".', $message)
         );
     }
 }

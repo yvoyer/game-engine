@@ -2,6 +2,8 @@
 
 namespace Star\GameEngine\Context;
 
+use function array_key_exists;
+
 final class ArrayMapContext implements GameContext, ContextRegistry
 {
     /**
@@ -9,14 +11,9 @@ final class ArrayMapContext implements GameContext, ContextRegistry
      */
     private $contexts = [];
 
-    public function addContextBuilder(ContextBuilder $builder): void
-    {
-        throw new \RuntimeException('Method ' . __METHOD__ . ' not implemented yet.');
-    }
-
     public function hasContext(string $name): bool
     {
-        return \array_key_exists($name, $this->contexts);
+        return array_key_exists($name, $this->contexts);
     }
 
     public function getContext(string $name): GameContext

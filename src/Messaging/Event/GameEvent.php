@@ -2,9 +2,10 @@
 
 namespace Star\GameEngine\Messaging\Event;
 
+use Star\Component\DomainEvent\DomainEvent;
 use Symfony\Contracts\EventDispatcher\Event;
 
-abstract class GameEvent extends Event
+abstract class GameEvent extends Event implements DomainEvent
 {
     abstract public function toString(): string;
 

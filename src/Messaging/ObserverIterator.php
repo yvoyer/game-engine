@@ -2,7 +2,8 @@
 
 namespace Star\GameEngine\Messaging;
 
-use Symfony\Contracts\EventDispatcher\Event;
+use Star\GameEngine\Messaging\Event\GameEvent;
+use function array_map;
 
 final class ObserverIterator implements EngineObserver
 {
@@ -13,7 +14,12 @@ final class ObserverIterator implements EngineObserver
 
     public function __construct(EngineObserver ...$observers)
     {
-        $this->observers = $observers;
+        array_map(
+            function (EngineObserver $observer) {
+                $this->addObserver($observer);
+            },
+            $observers
+        );
     }
 
     public function addObserver(EngineObserver $observer): void
@@ -21,7 +27,7 @@ final class ObserverIterator implements EngineObserver
         $this->observers[] = $observer;
     }
 
-    public function notifyListenerDispatch(callable $listener, Event $event): void
+    public function notifyListenerDispatch(callable $listener, GameEvent $event): void
     {
         foreach ($this->observers as $observer) {
             $observer->notifyListenerDispatch($listener, $event);

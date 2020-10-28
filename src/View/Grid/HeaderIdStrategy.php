@@ -2,13 +2,8 @@
 
 namespace Star\GameEngine\View\Grid;
 
-interface GridHeader
+interface HeaderIdStrategy
 {
-    /**
-     * @return int The number of header for this axis
-     */
-    public function maximumCount(): int;
-
     /**
      * @param int $position The position of the header, starting at 1.
      * @return string

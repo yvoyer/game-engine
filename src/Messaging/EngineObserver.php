@@ -2,9 +2,9 @@
 
 namespace Star\GameEngine\Messaging;
 
-use Symfony\Contracts\EventDispatcher\Event;
+use Star\GameEngine\Messaging\Event\GameEvent;
 
 interface EngineObserver
 {
-    public function notifyListenerDispatch(callable $listener, Event $event): void;
+    public function notifyListenerDispatch(callable $listener, GameEvent $event): void;
 }

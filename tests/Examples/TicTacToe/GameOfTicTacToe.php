@@ -41,8 +41,8 @@ final class GameOfTicTacToe
         $this->playerOne = PlayerId::fromString($playerOne);
         $this->playerTwo = PlayerId::fromString($playerTwo);
         $this->game = new GameEngine();
-        $builder = new GridBuilder(new AlphabeticHeader(3), new NumericHeader(3));
-        $grid = $builder->createGrid();
+        $builder = new GridBuilder();
+        $grid = $builder->square(3, new AlphabeticHeader(), new NumericHeader());
 
         $this->game->addHandler(
             PlayToken::class,

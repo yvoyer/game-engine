@@ -2,37 +2,25 @@
 
 namespace Star\GameEngine\View\Grid;
 
-final class GridBuilder implements GridFactory
+final class GridBuilder
 {
-    /**
-     * @var GridHeader
-     */
-    private $columnHeader;
-
-    /**
-     * @var GridHeader
-     */
-    private $rowHeader;
-
-    public function __construct(GridHeader $columnHeader, GridHeader $rowHeader)
+    public function square(int $size, HeaderIdStrategy $columnHeader, HeaderIdStrategy $rowHeader): GameGrid
     {
-        $this->columnHeader = $columnHeader;
-        $this->rowHeader = $rowHeader;
+        return $this->rectangle($size, $size, $columnHeader, $rowHeader);
     }
 
-    public function createGrid(): GameGrid
+    public function rectangle(int $xSize, int $ySize, HeaderIdStrategy $columnHeader, HeaderIdStrategy $rowHeader): GameGrid
     {
         $grid = new Grid();
-        $columnMaxCount = $this->columnHeader->maximumCount();
-        $rowMaxCount = $this->rowHeader->maximumCount();
 
-        for ($column = 1; $column <= $columnMaxCount; $column++) {
-            for ($row = 1; $row <= $rowMaxCount; $row++) {
-                $grid->createCell(
+        for ($column = 1; $column <= $xSize; $column++) {
+            for ($row = 1; $row <= $ySize; $row++) {
+                $grid->placeToken(
                     Coordinate::fromStrings(
-                        $this->columnHeader->generateId($column),
-                        $this->rowHeader->generateId($row)
-                    )
+                        $columnHeader->generateId($column),
+                        $rowHeader->generateId($row)
+                    ),
+                    new EmptyCell()
                 );
             }
         }

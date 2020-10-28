@@ -4,4 +4,5 @@ namespace Star\GameEngine\Component\Token;
 
 interface GameToken
 {
+    public function toString(): string;
 }

@@ -16,7 +16,6 @@ use Star\GameEngine\Messaging\Event\GameEngineEvents;
 use Star\GameEngine\Messaging\Event\GameEvent;
 use Star\GameEngine\Messaging\GameCommand;
 use Star\GameEngine\Messaging\GameQuery;
-use Star\GameEngine\Messaging\HandlerNotFound;
 use Star\GameEngine\Messaging\Queries\QueryResult;
 use Star\GameEngine\Testing\Stub\DoGameCommand;
 use Star\GameEngine\Testing\Stub\EventOccurred;
@@ -166,14 +165,6 @@ final class GameEngineTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('My command was invoked.');
         $engine->dispatchCommand($command);
-    }
-
-    public function test_it_should_throw_exception_when_no_handler_for_command(): void
-    {
-        $engine = new GameEngine();
-        $this->expectException(HandlerNotFound::class);
-        $this->expectExceptionMessage('No command handler was found for command "Mock_GameCommand_');
-        $engine->dispatchCommand($this->createMock(GameCommand::class));
     }
 
     public function test_it_should_call_listeners_on_same_event_based_on_priority(): void

@@ -2,7 +2,7 @@
 
 namespace Star\GameEngine\Messaging\Command;
 
-use Star\GameEngine\UserAction;
+use Star\GameEngine\Messaging\UserAction;
 
 final class ExecuteCallback implements UserAction
 {
