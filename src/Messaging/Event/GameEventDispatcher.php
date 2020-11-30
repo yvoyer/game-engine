@@ -2,12 +2,16 @@
 
 namespace Star\GameEngine\Messaging\Event;
 
+use InvalidArgumentException;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Star\GameEngine\Engine;
 use Star\GameEngine\GameVisitor;
 use Star\GameEngine\Messaging\EngineObserver;
+use Star\GameEngine\Messaging\GameCommand;
+use Star\GameEngine\Messaging\ObserverIterator;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use function get_class;
+use function sprintf;
 
 final class GameEventDispatcher extends EventDispatcher
 {
@@ -17,19 +21,25 @@ final class GameEventDispatcher extends EventDispatcher
     private $engine;
 
     /**
-     * @var EngineObserver
+     * @var ObserverIterator
      */
     private $observer;
 
-    public function __construct(Engine $engine, EngineObserver $observer)
+    public function __construct(Engine $engine)
     {
         parent::__construct();
         $this->engine = $engine;
-        $this->observer = $observer;
+        $this->observer = new ObserverIterator();
     }
 
     protected function callListeners(iterable $listeners, string $eventName, object $event)
     {
+        if (! $event instanceof GameEvent) {
+            throw new InvalidArgumentException(
+                sprintf('Event "%s" is not an instance of "%s".', get_class($event), GameEvent::class)
+            );
+        }
+
         foreach ($listeners as $listener) {
             if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
                 break;
@@ -49,5 +59,15 @@ final class GameEventDispatcher extends EventDispatcher
                 $visitor->visitListener($event, get_class($listener));
             }
         }
+    }
+
+    public function addObserver(EngineObserver $observer): void
+    {
+        $this->observer->addObserver($observer);
+    }
+
+    public function notifyScheduleCommand(GameCommand $command): void
+    {
+        $this->observer->notifyScheduleCommand($command);
     }
 }

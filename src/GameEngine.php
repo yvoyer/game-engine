@@ -15,7 +15,6 @@ use Star\GameEngine\Messaging\EngineObserver;
 use Star\GameEngine\Messaging\Event;
 use Star\GameEngine\Messaging\GameCommand;
 use Star\GameEngine\Messaging\GameQuery;
-use Star\GameEngine\Messaging\ObserverIterator;
 use Star\GameEngine\Messaging\Queries\QueryResult;
 use Star\GameEngine\Result\GameResult;
 use Star\GameEngine\Routing\MessageRouter;
@@ -51,15 +50,9 @@ final class GameEngine implements Engine, ContextRegistry
      */
     private $listenerPriorities = [];
 
-    /**
-     * @var EngineObserver
-     */
-    private $observers;
-
     public function __construct()
     {
-        $this->observers = new ObserverIterator();
-        $this->dispatcher = new Event\GameEventDispatcher($this, $this->observers);
+        $this->dispatcher = new Event\GameEventDispatcher($this);
         $this->router = new MessageRouter();
         $this->contexts = new ArrayMapContext();
     }
@@ -112,18 +105,14 @@ final class GameEngine implements Engine, ContextRegistry
 
     public function addObserver(EngineObserver $observer): void
     {
-        $this->observers->addObserver($observer);
+        $this->dispatcher->addObserver($observer);
     }
 
     public function dispatchCommand(GameCommand $command): void
     {
-        $event = new Event\CommandDispatchScheduled($command);
-        $this->dispatcher->dispatch($event, $event->messageName());
+        $this->dispatcher->notifyScheduleCommand($command);
 
         $this->router->handle($command, new CommandRunner());
-
-        $event = new Event\CommandWasDispatched($command);
-        $this->dispatcher->dispatch($event, $event->messageName());
     }
 
     public function dispatchQuery(GameQuery $query): QueryResult

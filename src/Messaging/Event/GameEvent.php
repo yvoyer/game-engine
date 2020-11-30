@@ -2,8 +2,13 @@
 
 namespace Star\GameEngine\Messaging\Event;
 
+use Doctrine\Inflector\InflectorFactory;
 use Star\Component\DomainEvent\DomainEvent;
 use Symfony\Contracts\EventDispatcher\Event;
+use function get_class;
+use function strlen;
+use function strrpos;
+use function substr;
 
 abstract class GameEvent extends Event implements DomainEvent
 {
@@ -11,7 +16,12 @@ abstract class GameEvent extends Event implements DomainEvent
 
     final public function messageName(): string
     {
-        return GameEngineEvents::GAME_EVENT;
+        $class = get_class($this);
+        $short = substr($class, strrpos($class, '\\') + 1, strlen($class));
+
+        $inflector = InflectorFactory::create()->build();
+
+        return $inflector->urlize($inflector->tableize($short));
     }
 
     abstract public function payload(): array;

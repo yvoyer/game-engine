@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Star\GameEngine\View\Grid;
+namespace Star\GameEngine\Component\View\Grid;
+
+use Star\GameEngine\Component\View\Coordinate;
 
 final class GridBuilder
 {

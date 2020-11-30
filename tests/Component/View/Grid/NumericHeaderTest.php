@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Star\GameEngine\View\Grid;
+namespace Star\GameEngine\Component\View\Grid;
 
 use PHPUnit\Framework\TestCase;
 

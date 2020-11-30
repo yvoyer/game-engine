@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Star\GameEngine\View\Grid;
+namespace Star\GameEngine\Component\View\Grid;
 
 use PHPUnit\Framework\TestCase;
-use Star\GameEngine\View\ViewRenderer;
+use Star\GameEngine\Component\View\ViewRenderer;
 
 final class GridBuilderTest extends TestCase
 {

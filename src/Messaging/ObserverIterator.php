@@ -27,6 +27,13 @@ final class ObserverIterator implements EngineObserver
         $this->observers[] = $observer;
     }
 
+    public function notifyScheduleCommand(GameCommand $command): void
+    {
+        foreach ($this->observers as $observer) {
+            $observer->notifyScheduleCommand($command);
+        }
+    }
+
     public function notifyListenerDispatch(callable $listener, GameEvent $event): void
     {
         foreach ($this->observers as $observer) {

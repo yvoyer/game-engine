@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Star\GameEngine\View\Grid;
+namespace Star\GameEngine\Component\View;
 
 use Assert\Assertion;
 use function explode;
@@ -24,6 +24,16 @@ final class Coordinate
         Assertion::notEmpty($y, 'Y-axis "%s" is empty, but non empty value was expected.');
         $this->x = $x;
         $this->y = $y;
+    }
+
+    public function getX(): string
+    {
+        return $this->x;
+    }
+
+    public function getY(): string
+    {
+        return $this->y;
     }
 
     public function toString(): string

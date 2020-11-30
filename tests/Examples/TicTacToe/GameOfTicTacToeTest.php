@@ -3,13 +3,13 @@
 namespace Star\GameEngine\Examples\TicTacToe;
 
 use PHPUnit\Framework\TestCase;
-use Psr\Log\Test\TestLogger;
+use Star\GameEngine\Extension\Logging\CollectMessages;
 
 final class GameOfTicTacToeTest extends TestCase
 {
     public function test_should_result_in_a_win_for_player_one(): void
     {
-        $game = new GameOfTicTacToe($logger = new TestLogger(), 'p1', 'p2');
+        $game = new GameOfTicTacToe($logger = new CollectMessages(), 'p1', 'p2');
         self::assertFalse($game->playToken('p1', 'B,2'));
         self::assertFalse($game->playToken('p2', 'A,1'));
         self::assertFalse($game->playToken('p1', 'A,3'));
@@ -19,7 +19,7 @@ final class GameOfTicTacToeTest extends TestCase
             [
 
             ],
-            $logger->records
+            $logger->getMessages()
         );
     }
 

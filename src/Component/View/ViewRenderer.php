@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Star\GameEngine\View;
-
-use Star\GameEngine\View\Grid\Coordinate;
+namespace Star\GameEngine\Component\View;
 
 interface ViewRenderer
 {

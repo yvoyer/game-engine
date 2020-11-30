@@ -1,9 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Star\GameEngine\View\Grid;
+namespace Star\GameEngine\Component\View\Grid;
 
 use Star\GameEngine\Component\Token\GameToken;
-use Star\GameEngine\View\ViewRenderer;
+use Star\GameEngine\Component\View\Coordinate;
+use Star\GameEngine\Component\View\ViewRenderer;
 
 final class Grid implements GameGrid
 {
@@ -23,6 +24,14 @@ final class Grid implements GameGrid
                 Coordinate::fromString($coordinate),
                 $token->toString()
             );
+        }
+    }
+
+    public function acceptGridVisitor(GridVisitor $visitor): void
+    {
+        $visitor->enterGrid();
+        foreach ($this->cells as $coordinate => $token) {
+            $visitor->visitTokenAtCoordinate(Coordinate::fromString($coordinate), $token);
         }
     }
 }

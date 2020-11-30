@@ -4,19 +4,22 @@ namespace Star\GameEngine\Examples\TicTacToe;
 
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Star\GameEngine\Component\Token\GameToken;
 use Star\GameEngine\Component\Token\StringToken;
+use Star\GameEngine\Component\View\Coordinate;
+use Star\GameEngine\Component\View\Grid\AlphabeticHeader;
+use Star\GameEngine\Component\View\Grid\GridBuilder;
+use Star\GameEngine\Component\View\Grid\GridVisitor;
+use Star\GameEngine\Component\View\Grid\NumericHeader;
 use Star\GameEngine\Context\ContextBuilder;
 use Star\GameEngine\Context\ContextRegistry;
 use Star\GameEngine\Context\GameContext;
+use Star\GameEngine\Extension\Logging\CollectMessages;
 use Star\GameEngine\GameEngine;
 use Star\GameEngine\Messaging\Event\GameEvent;
 use Star\GameEngine\Messaging\GameCommand;
 use Star\GameEngine\PlayerId;
 use Star\GameEngine\Result\GameResult;
-use Star\GameEngine\View\Grid\AlphabeticHeader;
-use Star\GameEngine\View\Grid\Coordinate;
-use Star\GameEngine\View\Grid\GridBuilder;
-use Star\GameEngine\View\Grid\NumericHeader;
 use function sprintf;
 
 final class GameOfTicTacToe
@@ -36,19 +39,19 @@ final class GameOfTicTacToe
      */
     private $game;
 
-    public function __construct(LoggerInterface $logger, string $playerOne, string $playerTwo)
+    public function __construct(CollectMessages $observer, string $playerOne, string $playerTwo)
     {
         $this->playerOne = PlayerId::fromString($playerOne);
         $this->playerTwo = PlayerId::fromString($playerTwo);
         $this->game = new GameEngine();
+        $this->game->addObserver($observer);
+
         $builder = new GridBuilder();
         $grid = $builder->square(3, new AlphabeticHeader(), new NumericHeader());
 
         $this->game->addHandler(
             PlayToken::class,
-            function (PlayToken $command) use ($grid, $logger) {
-                $logger->debug($command->toString(), $command->payload());
-
+            function (PlayToken $command) use ($grid) {
                 $token = 'O';
                 if ($this->playerOne->toString() === $command->playerId()->toString()) {
                     $token = 'X';
@@ -62,19 +65,34 @@ final class GameOfTicTacToe
 
         $this->game->addListener(
             TokenWasPlayed::class,
-            function (TokenWasPlayed $event) use ($grid, $logger) {
-                $logger->info($event->toString(), $event->payload());
+            function (TokenWasPlayed $event) use ($grid) {
+                $grid->acceptGridVisitor($checker = new TicTacToeWinningConditions());
 
-                $isTie = false; // all cells are filled, with no winner
-                $isWon = false; // 1 token is present in all cells of 1 row/column/x-line
-
-                if ($isWon) {
+                if ($checker->isWin()) {
                     $this->game->dispatchEvent(new GameWasWon($event->playerId()));
 // todo                    $this->getContext()->markAsWon($event->playerId());
-                } else if ($isTie) {
-                    $this->game->dispatchEvent(new GameWasTied());
+                } else if ($checker->isTied()) {
 // todo                    $this->getContext()->markAsTie();
-                }
+                    $this->game->dispatchEvent(new GameWasTied());
+                } // continue playing
+            },
+            0
+        );
+
+        $this->game->addListener(
+            GameWasWon::class,
+            function (GameWasWon $event) {
+                \var_dump($event); // todo use context to end game, or event?
+                throw new RuntimeException(__METHOD__ . ' todo');
+            },
+            0
+        );
+
+        $this->game->addListener(
+            GameWasTied::class,
+            function (GameWasTied $event) {
+                \var_dump($event);
+                throw new RuntimeException(__METHOD__ . ' todo');
             },
             0
         );
@@ -266,5 +284,74 @@ final class GameWasTied extends GameEvent
     public function payload(): array
     {
         throw new RuntimeException(__METHOD__ . ' not implemented yet.');
+    }
+}
+
+final class TicTacToeWinningConditions implements GridVisitor
+{
+    /**
+     * @var GameToken[][]
+     */
+    private $lines = [];
+
+    /**
+     * @var GameToken[][]
+     */
+    private $columns = [];
+
+    /**
+     * @var GameToken[]
+     */
+    private $diagonals = [];
+
+#$isTie = false; // all cells are filled, with no winner
+#$isWon = false; // 1 token is present in all cells of 1 row/column/x-line
+    public function enterGrid(): void
+    {
+        $this->lines = [];
+        $this->columns = [];
+        $this->diagonals = [];
+    }
+
+    public function visitTokenAtCoordinate(Coordinate $coordinate, GameToken $token): void
+    {
+        $this->lines[$coordinate->getX()][$coordinate->getY()] = $token;
+        $this->columns[$coordinate->getY()][$coordinate->getX()] = $token;
+        if (\in_array($coordinate->toString(), ['A1', 'B2', 'C3'])) {
+            $this->diagonals[] = $token;
+        }
+        if (\in_array($coordinate->toString(), ['C1', 'B2', 'A3'])) {
+            $this->diagonals[] = $token;
+        }
+    }
+
+    public function isWin(): bool
+    {
+        \var_dump($this->lines, $this->columns, $this->diagonals);
+        foreach ($this->lines as $line => $columns) {
+
+            $winner = '';
+            foreach ($columns as $column => $token) {
+                if (\mb_strlen($token->toString()) === 0) {
+                    break;
+                }
+
+                if ($winner === '') {
+                    $winner = $token->toString();
+                    continue;
+                }
+
+                if ($token->toString() !== $winner) {
+                    break;
+                }
+            }
+            \var_dump($winner);
+        }
+
+    }
+
+    public function isTied(): bool
+    {
+
     }
 }

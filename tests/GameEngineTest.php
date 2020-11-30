@@ -12,7 +12,6 @@ use Star\GameEngine\Extension\Callback\CallbackPlugin;
 use Star\GameEngine\Extension\GamePlugin;
 use Star\GameEngine\Messaging\DuplicateListenerForEvent;
 use Star\GameEngine\Messaging\DuplicatePriorityForEventListener;
-use Star\GameEngine\Messaging\Event\GameEngineEvents;
 use Star\GameEngine\Messaging\Event\GameEvent;
 use Star\GameEngine\Messaging\GameCommand;
 use Star\GameEngine\Messaging\GameQuery;
@@ -34,7 +33,7 @@ final class GameEngineTest extends TestCase
         $engine->addPlugin(
             $plugin = new CallbackPlugin(
                 [
-                    GameEngineEvents::GAME_EVENT => function (EventOccurred $event) use (&$dispatched) {
+                    EventOccurred::class => function (EventOccurred $event) use (&$dispatched) {
                         $dispatched = $event instanceof EventOccurred;
                     },
                 ]
@@ -289,29 +288,6 @@ final class GameEngineTest extends TestCase
         $this->assertTrue($listener->invoked);
         $this->assertSame($engine, $listener->engine);
         $this->assertInstanceOf(EventDispatcherInterface::class, $listener->dispatcher);
-    }
-
-    public function test_it_should_trigger_event_before_dispatching_command(): void
-    {
-        $engine = new GameEngine();
-        $engine->addListener(
-            GameEngineEvents::GAME_AFTER_COMMAND,
-            function () {
-                $this->fail('Event should not have been triggered');
-            },
-            50
-        );
-        $engine->addListener(
-            GameEngineEvents::GAME_BEFORE_COMMAND,
-            function () {
-                throw new RuntimeException('Before event triggered');
-            },
-            50
-        );
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Before event triggered');
-        $engine->dispatchCommand(new DoGameCommand());
     }
 
     public function test_it_should_throw_exception_when_duplicate_listener_for_same_event_registered(): void
