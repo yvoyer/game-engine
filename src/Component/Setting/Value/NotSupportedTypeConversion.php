@@ -24,7 +24,7 @@ final class NotSupportedTypeConversion extends LogicException
     {
         $type = gettype($raw);
         switch ($type) {
-            case 'double';
+            case 'double':
                 $type = 'float';
                 break;
         }

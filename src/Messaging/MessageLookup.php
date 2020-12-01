@@ -5,13 +5,15 @@ namespace Star\GameEngine\Messaging;
 use Star\GameEngine\Extension\GamePlugin;
 use Star\GameEngine\GameVisitor;
 
-final class MessageLookup implements GameVisitor {
+final class MessageLookup implements GameVisitor
+{
     /**
      * @var string[]
      */
     private $messages = [];
 
-    public function isRegistered(string $message): bool {
+    public function isRegistered(string $message): bool
+    {
         return false !== \array_search($message, $this->messages);
     }
 

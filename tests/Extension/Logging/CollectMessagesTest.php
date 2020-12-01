@@ -12,7 +12,8 @@ final class CollectMessagesTest extends TestCase
         $observer = new CollectMessages();
         self::assertSame([], $observer->getMessages());
 
-        $observer->notifyListenerDispatch(function () {}, new EventSpy('Something'));
+        $observer->notifyListenerDispatch(function () {
+        }, new EventSpy('Something'));
 
         self::assertSame(
             [

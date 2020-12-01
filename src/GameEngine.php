@@ -126,7 +126,6 @@ final class GameEngine implements Engine, ContextRegistry
     {
         $result = new GameResult();
         $this->acceptGameVisitor($result);
-
     }
 
     public function addContextBuilder(ContextBuilder $builder): void
@@ -163,4 +162,3 @@ final class GameEngine implements Engine, ContextRegistry
         $this->router->acceptGameVisitor($visitor);
     }
 }
-

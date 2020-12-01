@@ -15,6 +15,7 @@ final class ObserverIteratorTest extends TestCase
             ->method('notifyListenerDispatch');
 
         $iterator = new ObserverIterator($observer);
-        $iterator->notifyListenerDispatch(function () {}, new EventSpy('name'));
+        $iterator->notifyListenerDispatch(function () {
+        }, new EventSpy('name'));
     }
 }

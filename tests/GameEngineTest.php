@@ -232,13 +232,15 @@ final class GameEngineTest extends TestCase
     public function test_it_should_throw_exception_when_two_listener_of_same_event_registered_with_same_priority(): void
     {
         $engine = new GameEngine();
-        $engine->addListener('event', function () {}, 50);
+        $engine->addListener('event', function () {
+        }, 50);
 
         $this->expectException(DuplicatePriorityForEventListener::class);
         $this->expectExceptionMessage(
             'The listeners "Closure, Closure" on event "event" are registered with duplicated priority "50".'
         );
-        $engine->addListener('event', function () {}, 50);
+        $engine->addListener('event', function () {
+        }, 50);
     }
 
     public function test_it_should_visit_plugin(): void
@@ -259,7 +261,8 @@ final class GameEngineTest extends TestCase
             ->method('visitCommandHandler');
 
         $engine = new GameEngine();
-        $engine->addHandler('command_name', function () {});
+        $engine->addHandler('command_name', function () {
+        });
         $engine->acceptGameVisitor($visitor);
     }
 
@@ -304,7 +307,8 @@ final class GameEngineTest extends TestCase
         $this->expectException(DuplicateListenerForEvent::class);
         $this->expectExceptionMessage(
             sprintf(
-                'Listener "%s" was already registered for event "event".', get_class($listener)
+                'Listener "%s" was already registered for event "event".',
+                get_class($listener)
             )
         );
         $engine->addListener('event', $listener, 5);

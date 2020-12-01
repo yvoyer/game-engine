@@ -12,7 +12,8 @@ final class MessageLookupTest extends TestCase
 
         self::assertFalse($visitor->isRegistered('name'));
 
-        $visitor->visitCommandHandler('name', function () {});
+        $visitor->visitCommandHandler('name', function () {
+        });
 
         self::assertTrue($visitor->isRegistered('name'));
     }
@@ -23,7 +24,8 @@ final class MessageLookupTest extends TestCase
 
         self::assertFalse($visitor->isRegistered('name'));
 
-        $visitor->visitQueryHandler('name', function () {});
+        $visitor->visitQueryHandler('name', function () {
+        });
 
         self::assertTrue($visitor->isRegistered('name'));
     }

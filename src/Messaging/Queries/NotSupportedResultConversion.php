@@ -4,7 +4,8 @@ namespace Star\GameEngine\Messaging\Queries;
 
 final class NotSupportedResultConversion extends \RuntimeException
 {
-    public function __construct(QueryResult $result, string $type) {
+    public function __construct(QueryResult $result, string $type)
+    {
         parent::__construct(
             \sprintf(
                 'Conversion of result from "%s" to "%s" is not supported.',

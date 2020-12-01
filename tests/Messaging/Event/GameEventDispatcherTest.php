@@ -21,7 +21,8 @@ final class GameEventDispatcherTest extends TestCase
 
         $dispatcher = new GameEventDispatcher($engine);
         $dispatcher->addObserver($observer);
-        $dispatcher->addListener('event', function () {});
+        $dispatcher->addListener('event', function () {
+        });
 
         $dispatcher->dispatch($this->createMock(GameEvent::class), 'event');
     }
@@ -29,7 +30,8 @@ final class GameEventDispatcherTest extends TestCase
     public function test_it_should_throw_exception_when_invalid_event_given(): void
     {
         $dispatcher = new GameEventDispatcher($this->createMock(Engine::class));
-        $dispatcher->addListener('stdClass', function () {});
+        $dispatcher->addListener('stdClass', function () {
+        });
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(

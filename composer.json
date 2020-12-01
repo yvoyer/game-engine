@@ -1,8 +1,9 @@
 {
     "name": "star/game-engine",
-    "Description": "PHP engine to create games.",
+    "description": "PHP engine to create games.",
     "type": "project",
     "license": "MIT",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name": "Yannick Voyer"
@@ -10,7 +11,7 @@
     ],
     "autoload": {
         "psr-4": {
-			"Star\\GameEngine\\": "src"
+            "Star\\GameEngine\\": "src"
         }
     },
     "autoload-dev": {
@@ -19,7 +20,7 @@
         }
     },
     "require": {
-        "php": "^7.3",
+        "php": "~7.3",
         "ext-bcmath": "*",
         "ext-json": "*",
         "behat/transliterator": "^1.2",
@@ -30,11 +31,10 @@
         "star/domain-event": "^2.1",
         "star/identity": "^1.2",
         "star/state-machine": "^2.0",
-        "symfony/event-dispatcher": "^5.0",
-        "symfony/messenger": "^5.0"
+        "symfony/event-dispatcher": "^5.0"
     },
     "require-dev": {
-        "infection/infection": "^0.19.0",
+        "infection/infection": "^0.18",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "^0.12.52",
         "phpstan/phpstan-phpunit": "^0.12.16",

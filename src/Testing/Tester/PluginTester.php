@@ -103,7 +103,8 @@ final class PluginTester
         return $this;
     }
 
-    public function assertQueryIsRegistered(string $query): void {
+    public function assertQueryIsRegistered(string $query): void
+    {
         $this->engine->acceptGameVisitor($visitor = new MessageLookup());
         Assert::assertTrue($visitor->isRegistered($query));
     }
@@ -244,7 +245,8 @@ final class PluginTester
         }
     }
 
-    private function expectContextInstanceOf(string $contextName, string $class): self {
+    private function expectContextInstanceOf(string $contextName, string $class): self
+    {
         $this->expectContextExists($contextName);
         Assert::assertInstanceOf(
             $class,

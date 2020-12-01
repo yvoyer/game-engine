@@ -11,7 +11,8 @@ final class CallbackPluginTest extends TestCase
     {
         $plugin = new CallbackPlugin(
             [
-                'event' => function () {},
+                'event' => function () {
+                },
             ]
         );
         $plugin->attach($spy = new EngineSpy());
@@ -25,7 +26,8 @@ final class CallbackPluginTest extends TestCase
         $plugin = new CallbackPlugin(
             [],
             [
-                'event' => function () {},
+                'event' => function () {
+                },
             ]
         );
         $plugin->attach($spy = new EngineSpy());

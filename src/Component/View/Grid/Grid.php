@@ -18,7 +18,8 @@ final class Grid implements GameGrid
         $this->cells[$coordinate->toString()] = $token;
     }
 
-    public function render(ViewRenderer $renderer): void {
+    public function render(ViewRenderer $renderer): void
+    {
         foreach ($this->cells as $coordinate => $token) {
             $renderer->collectCellToken(
                 Coordinate::fromString($coordinate),

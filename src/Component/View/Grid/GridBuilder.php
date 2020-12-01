@@ -6,13 +6,20 @@ use Star\GameEngine\Component\View\Coordinate;
 
 final class GridBuilder
 {
-    public function square(int $size, HeaderIdStrategy $columnHeader, HeaderIdStrategy $rowHeader): GameGrid
-    {
+    public function square(
+        int $size,
+        HeaderIdStrategy $columnHeader,
+        HeaderIdStrategy $rowHeader
+    ): GameGrid {
         return $this->rectangle($size, $size, $columnHeader, $rowHeader);
     }
 
-    public function rectangle(int $xSize, int $ySize, HeaderIdStrategy $columnHeader, HeaderIdStrategy $rowHeader): GameGrid
-    {
+    public function rectangle(
+        int $xSize,
+        int $ySize,
+        HeaderIdStrategy $columnHeader,
+        HeaderIdStrategy $rowHeader
+    ): GameGrid {
         $grid = new Grid();
 
         for ($column = 1; $column <= $xSize; $column++) {

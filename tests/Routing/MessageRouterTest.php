@@ -19,7 +19,8 @@ final class MessageRouterTest extends TestCase
             ->method('run');
 
         $router = new MessageRouter();
-        $router->addHandler(get_class($message), function () {});
+        $router->addHandler(get_class($message), function () {
+        });
 
         $router->handle($message, $runner);
     }
