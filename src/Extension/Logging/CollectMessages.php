@@ -8,19 +8,37 @@ use Star\GameEngine\Messaging\GameCommand;
 
 final class CollectMessages implements EngineObserver
 {
+    const LOG_LISTENER = 1;
+    const LOG_COMMAND = 2;
+    const LOG_ALL = self::LOG_LISTENER | self::LOG_COMMAND;
+
     /**
      * @var string[]
      */
     private $messages = [];
 
+    /**
+     * @var int
+     */
+    private $level;
+
+    public function __construct(int $level = self::LOG_ALL)
+    {
+        $this->level = $level;
+    }
+
     public function notifyListenerDispatch(callable $listener, GameEvent $event): void
     {
-        $this->messages[] = $event->toString();
+        if (($this->level & self::LOG_LISTENER) === self::LOG_LISTENER) {
+            $this->messages[] = $event->toString();
+        }
     }
 
     public function notifyScheduleCommand(GameCommand $command): void
     {
-        $this->messages[] = $command->toString();
+        if (($this->level & self::LOG_COMMAND) === self::LOG_COMMAND) {
+            $this->messages[] = $command->toString();
+        }
     }
 
     public function getMessages(): array {
