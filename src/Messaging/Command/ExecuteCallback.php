@@ -26,6 +26,9 @@ final class ExecuteCallback implements UserAction
         return 'Executing a callback.';
     }
 
+    /**
+     * @return mixed[]
+     */
     public function payload(): array
     {
         return [];

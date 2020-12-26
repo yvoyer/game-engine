@@ -4,44 +4,52 @@ namespace Star\GameEngine\Messaging\Queries;
 
 use PHPUnit\Framework\TestCase;
 use function sprintf;
-use function ucfirst;
 
 final class IntResultTest extends TestCase
 {
-    /**
-     * @param string $type
-     * @dataProvider provideNotSupportedTypes
-     */
-    public function test_it_should_only_support_bool_type(string $type): void
+    public function test_it_should_not_allow_bool_type(): void
     {
-        $method = 'to' . ucfirst($type);
         $this->expectException(NotSupportedResultConversion::class);
         $this->expectExceptionMessage(
             sprintf(
-                'Conversion of result from "%s" to "%s" is not supported.',
-                IntResult::class,
-                $type
+                'Conversion of result from "%s" to "bool" is not supported.',
+                IntResult::class
             )
         );
-        IntResult::fromInt(123)->{$method}();
+        IntResult::fromInt(123)->toBool();
     }
 
-    public static function provideNotSupportedTypes(): array
+    public function test_it_should_not_allow_array_type(): void
     {
-        return [
-            ['bool'],
-            ['array'],
-            ['object'],
-        ];
+        $this->expectException(NotSupportedResultConversion::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Conversion of result from "%s" to "array" is not supported.',
+                IntResult::class
+            )
+        );
+        IntResult::fromInt(123)->toArray();
+    }
+
+    public function test_it_should_not_allow_object_type(): void
+    {
+        $this->expectException(NotSupportedResultConversion::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Conversion of result from "%s" to "object" is not supported.',
+                IntResult::class
+            )
+        );
+        IntResult::fromInt(123)->toObject();
     }
 
     public function test_it_should_allow_converting_to_string(): void
     {
-        $this->assertSame('123', IntResult::fromInt(123)->toString());
+        self::assertSame('123', IntResult::fromInt(123)->toString());
     }
 
     public function test_it_should_allow_converting_to_float(): void
     {
-        $this->assertSame(123.0, IntResult::fromInt(123)->toFloat());
+        self::assertSame(123.0, IntResult::fromInt(123)->toFloat());
     }
 }

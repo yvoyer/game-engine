@@ -36,11 +36,6 @@ final class IntegerValue implements SettingValue
         throw new NotSupportedTypeConversion($this->value, 'bool');
     }
 
-    public static function fromMixed($value): SettingValue
-    {
-        return TypeGuesser::fromMixed($value);
-    }
-
     public static function fromInt(int $value): SettingValue
     {
         return new self($value);

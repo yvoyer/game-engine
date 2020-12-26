@@ -4,6 +4,7 @@ namespace Star\GameEngine\Testing\Tester;
 
 use PHPUnit\Framework\Assert;
 use Star\GameEngine\Context\ContextBuilder;
+use Star\GameEngine\Context\GameContext;
 use Star\GameEngine\Context\NoContext;
 use Star\GameEngine\Engine;
 use Star\GameEngine\Extension\GamePlugin;
@@ -21,7 +22,7 @@ use function sprintf;
 final class PluginTester
 {
     /**
-     * @var Engine
+     * @var GameEngine
      */
     private $engine;
 
@@ -50,7 +51,7 @@ final class PluginTester
         $this->engine = new GameEngine();
         $this->engine->addContextBuilder($builder);
         array_map(
-            function (GamePlugin $plugin) {
+            function (GamePlugin $plugin): void {
                 $this->engine->addPlugin($plugin);
             },
             $plugins
@@ -91,11 +92,10 @@ final class PluginTester
             );
         }
 
-
         $this->dispatchedCommands[$class] = false;
         $this->engine->addHandler(
             $class,
-            function (GameCommand $command) {
+            function (GameCommand $command): void {
                 $this->dispatchedCommands[get_class($command)] = true;
             }
         );
@@ -119,7 +119,7 @@ final class PluginTester
         $this->notDispatchedCommands[$class] = true;
         $this->engine->addHandler(
             $class,
-            function (GameCommand $command) {
+            function (GameCommand $command): void {
                 $this->notDispatchedCommands[get_class($command)] = false;
             }
         );
@@ -136,7 +136,7 @@ final class PluginTester
         $this->dispatchedEvents[$class] = false;
         $this->engine->addListener(
             $class,
-            function () use ($class) {
+            function () use ($class): void {
                 $this->dispatchedEvents[$class] = true;
             },
             10000
@@ -175,7 +175,7 @@ final class PluginTester
     public function whenCommandIssued(GameCommand $command, GameCommand ...$others): void
     {
         array_map(
-            function (GameCommand $command) {
+            function (GameCommand $command): void {
                 $this->engine->dispatchCommand($command);
             },
             array_merge([$command], $others)
@@ -187,7 +187,7 @@ final class PluginTester
     public function whenEventDispatched(GameEvent $first, GameEvent ...$others): void
     {
         array_map(
-            function (GameEvent $event) {
+            function (GameEvent $event): void {
                 $this->engine->dispatchEvent($event);
             },
             array_merge([$first], $others)
@@ -196,6 +196,11 @@ final class PluginTester
         $this->assertExpectations();
     }
 
+    /**
+     * @param string $name
+     * @param class-string $class
+     * @return GameContext
+     */
     public function getContext(string $name, string $class): GameContext
     {
         $this->expectContextExists($name);
@@ -245,6 +250,11 @@ final class PluginTester
         }
     }
 
+    /**
+     * @param string $contextName
+     * @param class-string $class
+     * @return $this
+     */
     private function expectContextInstanceOf(string $contextName, string $class): self
     {
         $this->expectContextExists($contextName);

@@ -12,7 +12,6 @@ use Star\GameEngine\Messaging\Event\GameEvent;
 use Star\GameEngine\Messaging\GameCommand;
 use Star\GameEngine\Messaging\GameQuery;
 use Star\GameEngine\Messaging\Queries\QueryResult;
-use Star\GameEngine\Result\GameResult;
 use function array_merge;
 
 final class EngineSpy implements Engine
@@ -23,7 +22,7 @@ final class EngineSpy implements Engine
     public $listeners = [];
 
     /**
-     * @var DomainEvent
+     * @var DomainEvent[]
      */
     public $publishedEvents = [];
 
@@ -68,11 +67,6 @@ final class EngineSpy implements Engine
     }
 
     public function dispatchQuery(GameQuery $query): QueryResult
-    {
-        throw new RuntimeException(__METHOD__ . ' not implemented yet.');
-    }
-
-    public function getGameResult(): GameResult
     {
         throw new RuntimeException(__METHOD__ . ' not implemented yet.');
     }

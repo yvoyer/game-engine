@@ -21,6 +21,9 @@ final class EventOccurred extends GameEvent
         return $this->name . ' occurred.';
     }
 
+    /**
+     * @return mixed[]
+     */
     public function payload(): array
     {
         return [

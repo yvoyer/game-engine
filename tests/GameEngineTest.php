@@ -19,6 +19,7 @@ use Star\GameEngine\Messaging\Queries\QueryResult;
 use Star\GameEngine\Testing\Stub\DoGameCommand;
 use Star\GameEngine\Testing\Stub\EventOccurred;
 use Star\GameEngine\Testing\Stub\EventSpy;
+use Star\GameEngine\Testing\Stub\ListenerStub;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use function func_get_args;
 use function get_class;
@@ -33,18 +34,18 @@ final class GameEngineTest extends TestCase
         $engine->addPlugin(
             $plugin = new CallbackPlugin(
                 [
-                    EventOccurred::class => function (EventOccurred $event) use (&$dispatched) {
-                        $dispatched = $event instanceof EventOccurred;
+                    EventOccurred::class => function () use (&$dispatched): void {
+                        $dispatched = true;
                     },
                 ]
             )
         );
 
-        $this->assertFalse($dispatched);
+        self::assertFalse($dispatched);
 
         $engine->dispatchEvent(new EventOccurred('event'));
 
-        $this->assertTrue($dispatched);
+        self::assertTrue($dispatched);
     }
 
     public function test_command_should_be_dispatched(): void
@@ -55,37 +56,37 @@ final class GameEngineTest extends TestCase
             $plugin = new CallbackPlugin(
                 [],
                 [
-                    DoGameCommand::class => function () use (&$dispatched) {
+                    DoGameCommand::class => function () use (&$dispatched): void {
                         $dispatched = true;
                     },
                 ]
             )
         );
 
-        $this->assertFalse($dispatched);
+        self::assertFalse($dispatched);
 
         $engine->dispatchCommand(new DoGameCommand());
 
-        $this->assertTrue($dispatched);
+        self::assertTrue($dispatched);
     }
 
     public function test_it_should_return_the_context(): void
     {
         $engine = new GameEngine();
-        $this->assertFalse($engine->hasContext('name'));
+        self::assertFalse($engine->hasContext('name'));
 
         $engine->addContextBuilder(
-            new SingleContextByName('name', $this->createMock(GameContext::class))
+            new SingleContextByName('name', $expected = $this->createMock(GameContext::class))
         );
 
-        $this->assertTrue($engine->hasContext('name'));
-        $this->assertInstanceOf(GameContext::class, $engine->getContext('name'));
+        self::assertTrue($engine->hasContext('name'));
+        self::assertSame($expected, $engine->getContext('name'));
     }
 
     public function test_it_should_throw_exception_when_context_not_found(): void
     {
         $engine = new GameEngine();
-        $this->assertFalse($engine->hasContext('not-found'));
+        self::assertFalse($engine->hasContext('not-found'));
 
         $this->expectException(GameContextNotFound::class);
         $this->expectExceptionMessage('The game context "not-found" could not be found.');
@@ -98,7 +99,7 @@ final class GameEngineTest extends TestCase
         $engine->addContextBuilder(
             new SingleContextByName('name', $this->createMock(GameContext::class))
         );
-        $this->assertTrue($engine->hasContext('name'));
+        self::assertTrue($engine->hasContext('name'));
 
         $this->expectException(DuplicatedGameContext::class);
         $this->expectExceptionMessage('The game context "name" is already set.');
@@ -113,17 +114,17 @@ final class GameEngineTest extends TestCase
         $engine->addContextBuilder(
             new SingleContextByName('name', $original = $this->createMock(GameContext::class))
         );
-        $this->assertSame($original, $engine->getContext('name'));
+        self::assertSame($original, $engine->getContext('name'));
 
         $engine->updateContext('name', $new = $this->createMock(GameContext::class));
 
-        $this->assertSame($new, $engine->getContext('name'));
+        self::assertSame($new, $engine->getContext('name'));
     }
 
     public function test_it_should_throw_exception_when_context_not_set_on_replace(): void
     {
         $engine = new GameEngine();
-        $this->assertFalse($engine->hasContext('name'));
+        self::assertFalse($engine->hasContext('name'));
 
         $this->expectException(GameContextNotFound::class);
         $this->expectExceptionMessage('The game context "name" could not be found.');
@@ -137,16 +138,16 @@ final class GameEngineTest extends TestCase
         $event = $this->createMock(GameEvent::class);
 
         $engine->addPlugin($plugin = new CallbackPlugin([
-            get_class($event) => function () use (&$dispatched) {
+            get_class($event) => function () use (&$dispatched): void {
                 $dispatched = true;
             },
         ]));
 
-        $this->assertFalse($dispatched);
+        self::assertFalse($dispatched);
 
         $engine->dispatchEvent($event);
 
-        $this->assertTrue($dispatched);
+        self::assertTrue($dispatched);
     }
 
     public function test_it_should_dispatch_command_to_handler(): void
@@ -156,7 +157,7 @@ final class GameEngineTest extends TestCase
 
         $engine->addHandler(
             get_class($command),
-            function () {
+            function (): void {
                 throw new RuntimeException('My command was invoked.');
             }
         );
@@ -172,41 +173,41 @@ final class GameEngineTest extends TestCase
         $event = new EventSpy('event');
         $engine->addListener(
             EventSpy::class,
-            function (EventSpy $event) {
+            function (EventSpy $event): void {
                 $event->addPayload('normal');
             },
             500
         );
         $engine->addListener(
             EventSpy::class,
-            function (EventSpy $event) {
+            function (EventSpy $event): void {
                 $event->addPayload('fast');
             },
             700
         );
         $engine->addListener(
             EventSpy::class,
-            function (EventSpy $event) {
+            function (EventSpy $event): void {
                 $event->addPayload('very slow');
             },
             100
         );
         $engine->addListener(
             EventSpy::class,
-            function (EventSpy $event) {
+            function (EventSpy $event): void {
                 $event->addPayload('very fast');
             },
             900
         );
         $engine->addListener(
             EventSpy::class,
-            function (EventSpy $event) {
+            function (EventSpy $event): void {
                 $event->addPayload('slow');
             },
             300
         );
 
-        $this->assertSame(
+        self::assertSame(
             [
                 'event occurred.',
             ],
@@ -215,7 +216,7 @@ final class GameEngineTest extends TestCase
 
         $engine->dispatchEvent($event);
 
-        $this->assertSame(
+        self::assertSame(
             [
                 'event occurred.',
                 'very fast',
@@ -232,21 +233,21 @@ final class GameEngineTest extends TestCase
     public function test_it_should_throw_exception_when_two_listener_of_same_event_registered_with_same_priority(): void
     {
         $engine = new GameEngine();
-        $engine->addListener('event', function () {
-        }, 50);
+        $engine->addListener('event', new ListenerStub(), 50);
 
         $this->expectException(DuplicatePriorityForEventListener::class);
         $this->expectExceptionMessage(
-            'The listeners "Closure, Closure" on event "event" are registered with duplicated priority "50".'
+            'The listeners "AnonymousClosure, ListenerStub" on event "event" are '
+            . 'registered with duplicated priority "50".'
         );
-        $engine->addListener('event', function () {
+        $engine->addListener('event', function (): void {
         }, 50);
     }
 
     public function test_it_should_visit_plugin(): void
     {
         $visitor = $this->createMock(GameVisitor::class);
-        $visitor->expects($this->once())->method('visitPlugin');
+        $visitor->expects(self::once())->method('visitPlugin');
 
         $engine = new GameEngine();
         $engine->addPlugin($this->createMock(GamePlugin::class));
@@ -257,11 +258,11 @@ final class GameEngineTest extends TestCase
     {
         $visitor = $this->createMock(GameVisitor::class);
         $visitor
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('visitCommandHandler');
 
         $engine = new GameEngine();
-        $engine->addHandler('command_name', function () {
+        $engine->addHandler('command_name', function (): void {
         });
         $engine->acceptGameVisitor($visitor);
     }
@@ -270,10 +271,21 @@ final class GameEngineTest extends TestCase
     {
         $engine = new GameEngine();
         $listener = new class() {
+            /**
+             * @var bool
+             */
             public $invoked = false;
+
+            /**
+             * @var Engine|null
+             */
             public $engine;
+
+            /**
+             * @var EventDispatcherInterface|null
+             */
             public $dispatcher;
-            public function __invoke()
+            public function __invoke(): void
             {
                 $this->invoked = true;
                 $this->engine = func_get_args()[1];
@@ -282,22 +294,22 @@ final class GameEngineTest extends TestCase
         };
         $engine->addListener(EventOccurred::class, $listener, 500);
 
-        $this->assertFalse($listener->invoked);
-        $this->assertNull($listener->engine);
-        $this->assertNull($listener->dispatcher);
+        self::assertFalse($listener->invoked);
+        self::assertNull($listener->engine);
+        self::assertNull($listener->dispatcher);
 
         $engine->dispatchEvent(new EventOccurred('e'));
 
-        $this->assertTrue($listener->invoked);
-        $this->assertSame($engine, $listener->engine);
-        $this->assertInstanceOf(EventDispatcherInterface::class, $listener->dispatcher);
+        self::assertTrue($listener->invoked);
+        self::assertInstanceOf(Engine::class, $listener->engine);
+        self::assertInstanceOf(EventDispatcherInterface::class, $listener->dispatcher);
     }
 
     public function test_it_should_throw_exception_when_duplicate_listener_for_same_event_registered(): void
     {
         $engine = new GameEngine();
         $listener = new class {
-            public function __invoke()
+            public function __invoke(): void
             {
                 throw new RuntimeException('Method ' . __METHOD__ . ' not implemented yet.');
             }
@@ -317,14 +329,15 @@ final class GameEngineTest extends TestCase
     public function test_it_should_handle_query_dispatching(): void
     {
         $query = $this->createMock(GameQuery::class);
+        $expected = $this->createMock(QueryResult::class);
 
         $engine = new GameEngine();
         $engine->addHandler(
             get_class($query),
-            function (): QueryResult {
-                return $this->createMock(QueryResult::class);
+            function () use ($expected) : QueryResult {
+                return $expected;
             }
         );
-        $this->assertInstanceOf(QueryResult::class, $engine->dispatchQuery($query));
+        self::assertSame($expected, $engine->dispatchQuery($query));
     }
 }

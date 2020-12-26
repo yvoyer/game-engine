@@ -34,6 +34,9 @@ final class BoolResult implements QueryResult
         throw NotSupportedResultConversion::toFloatConversionNotAllowed($this);
     }
 
+    /**
+     * @return mixed[]
+     */
     public function toArray(): array
     {
         throw NotSupportedResultConversion::toArrayConversionNotAllowed($this);

@@ -11,6 +11,4 @@ interface SettingValue
     public function toFloat(): float;
 
     public function toBool(): bool;
-
-    public static function fromMixed($value): SettingValue;
 }

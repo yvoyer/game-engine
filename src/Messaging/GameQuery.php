@@ -2,9 +2,13 @@
 
 namespace Star\GameEngine\Messaging;
 
-use Star\GameEngine\Queries\QueryResult;
+use Star\GameEngine\Messaging\Queries\QueryResult;
 
 interface GameQuery extends GameMessage
 {
+    /**
+     * @param mixed $result
+     * @return QueryResult
+     */
     public function createResult($result): QueryResult;
 }

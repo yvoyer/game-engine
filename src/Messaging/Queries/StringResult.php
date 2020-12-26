@@ -34,11 +34,17 @@ final class StringResult implements QueryResult
         throw NotSupportedResultConversion::toFloatConversionNotAllowed($this);
     }
 
+    /**
+     * @return mixed[]
+     */
     public function toArray(): array
     {
         throw NotSupportedResultConversion::toArrayConversionNotAllowed($this);
     }
 
+    /**
+     * @return object
+     */
     public function toObject()
     {
         throw NotSupportedResultConversion::toObjectConversionNotAllowed($this);

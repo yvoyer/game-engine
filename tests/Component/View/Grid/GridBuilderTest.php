@@ -13,7 +13,7 @@ final class GridBuilderTest extends TestCase
         $grid = $builder->square(4, new NumericHeader(), new NumericHeader());
         $renderer = $this->createMock(ViewRenderer::class);
         $renderer
-            ->expects($this->exactly(16))
+            ->expects(self::exactly(16))
             ->method('collectCellToken');
 
         $grid->render($renderer);
@@ -25,7 +25,7 @@ final class GridBuilderTest extends TestCase
         $grid = $builder->rectangle(2, 4, new NumericHeader(), new NumericHeader());
         $renderer = $this->createMock(ViewRenderer::class);
         $renderer
-            ->expects($this->exactly(8))
+            ->expects(self::exactly(8))
             ->method('collectCellToken');
 
         $grid->render($renderer);

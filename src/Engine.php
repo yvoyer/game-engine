@@ -44,6 +44,4 @@ interface Engine
     public function dispatchCommand(GameCommand $command): void;
 
     public function dispatchQuery(GameQuery $query): QueryResult;
-
-    public function getGameResult(): GameResult;
 }

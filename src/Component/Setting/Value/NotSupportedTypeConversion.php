@@ -9,6 +9,10 @@ use function strval;
 
 final class NotSupportedTypeConversion extends LogicException
 {
+    /**
+     * @param mixed $raw
+     * @param string $to
+     */
     public function __construct($raw, string $to)
     {
         parent::__construct(
@@ -20,6 +24,10 @@ final class NotSupportedTypeConversion extends LogicException
         );
     }
 
+    /**
+     * @param mixed $raw
+     * @return string
+     */
     private function getReadableType($raw): string
     {
         $type = gettype($raw);

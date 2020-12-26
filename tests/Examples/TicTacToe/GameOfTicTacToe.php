@@ -2,11 +2,12 @@
 
 namespace Star\GameEngine\Examples\TicTacToe;
 
+use Star\Component\State\TestContext;
 use Star\GameEngine\Component\Token\GameToken;
 use Star\GameEngine\Component\Token\StringToken;
 use Star\GameEngine\Component\View\Coordinate;
 use Star\GameEngine\Component\View\Grid\AlphabeticHeader;
-use Star\GameEngine\Component\View\Grid\Grid;
+use Star\GameEngine\Component\View\Grid\GameGrid;
 use Star\GameEngine\Component\View\Grid\GridBuilder;
 use Star\GameEngine\Component\View\Grid\GridVisitor;
 use Star\GameEngine\Component\View\Grid\NumericHeader;
@@ -42,7 +43,7 @@ final class GameOfTicTacToe
     private $game;
 
     /**
-     * @var Grid
+     * @var GameGrid
      */
     private $grid;
 
@@ -63,7 +64,7 @@ final class GameOfTicTacToe
 
         $this->game->addHandler(
             PlayToken::class,
-            function (PlayToken $command) {
+            function (PlayToken $command): void {
                 $token = 'O';
                 if ($this->playerOne->toString() === $command->playerId()->toString()) {
                     $token = 'X';
@@ -77,7 +78,7 @@ final class GameOfTicTacToe
 
         $this->game->addListener(
             TokenWasPlayed::class,
-            function (TokenWasPlayed $event) {
+            function (TokenWasPlayed $event): void {
                 $this->grid->acceptGridVisitor($checker = new TicTacToeWinningConditions());
 
                 if ($checker->isWon()) {
@@ -95,7 +96,7 @@ final class GameOfTicTacToe
 
         $this->game->addListener(
             GameWasWon::class,
-            function (GameWasWon $event) {
+            function (GameWasWon $event): void {
                 $this->getContext()->endGame();
                 $this->winner = $event->winner();
             },
@@ -104,7 +105,7 @@ final class GameOfTicTacToe
 
         $this->game->addListener(
             GameWasTied::class,
-            function () {
+            function (): void {
                 $this->getContext()->endGame();
             },
             0
@@ -133,7 +134,7 @@ final class GameOfTicTacToe
     public function getGameResult(): GameResult
     {
         $result = new GameResult();
-        if ($this->winner) {
+        if ($this->winner instanceof PlayerId) {
             $result->addWinningPlayer($this->winner);
         }
 
@@ -142,7 +143,12 @@ final class GameOfTicTacToe
 
     private function getContext(): TicTacToeContext
     {
-        return $this->game->getContext('state');
+        /**
+         * @var TicTacToeContext $context
+         */
+        $context = $this->game->getContext('state');
+
+        return $context;
     }
 }
 
@@ -213,6 +219,9 @@ final class PlayToken implements GameCommand
         );
     }
 
+    /**
+     * @return mixed[]
+     */
     public function payload(): array
     {
         return [
@@ -259,6 +268,9 @@ final class TokenWasPlayed extends GameEvent
         );
     }
 
+    /**
+     * @return mixed[]
+     */
     public function payload(): array
     {
         return [
@@ -290,6 +302,9 @@ final class GameWasWon extends GameEvent
         return sprintf('The game was won by player "%s".', $this->winner->toString());
     }
 
+    /**
+     * @return mixed[]
+     */
     public function payload(): array
     {
         return [
@@ -305,6 +320,9 @@ final class GameWasTied extends GameEvent
         return 'The game ended with a tie.';
     }
 
+    /**
+     * @return mixed[]
+     */
     public function payload(): array
     {
         return [];
@@ -351,11 +369,11 @@ final class TicTacToeWinningConditions implements GridVisitor
         $this->columns[$coordinate->getX()][$coordinate->getY()] = $token->toString();
         $this->lines[$coordinate->getY()][$coordinate->getX()] = $token->toString();
 
-        if (in_array($coordinate->toString(), ['A,1', 'B,2', 'C,3'])) {
+        if (in_array($coordinate->toString(), ['A,1', 'B,2', 'C,3'], true)) {
             $this->diagonals[self::DIAGONAL_ONE][] = $token->toString();
         }
 
-        if (in_array($coordinate->toString(), ['A,3', 'B,2', 'C,1'])) {
+        if (in_array($coordinate->toString(), ['A,3', 'B,2', 'C,1'], true)) {
             $this->diagonals[self::DIAGONAL_TWO][] = $token->toString();
         }
 

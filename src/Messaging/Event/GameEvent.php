@@ -17,12 +17,15 @@ abstract class GameEvent extends Event implements DomainEvent
     final public function messageName(): string
     {
         $class = get_class($this);
-        $short = substr($class, strrpos($class, '\\') + 1, strlen($class));
+        $short = substr($class, (int) strrpos($class, '\\') + 1, strlen($class));
 
         $inflector = InflectorFactory::create()->build();
 
         return $inflector->urlize($inflector->tableize($short));
     }
 
+    /**
+     * @return mixed[]
+     */
     abstract public function payload(): array;
 }

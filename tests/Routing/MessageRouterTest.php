@@ -15,12 +15,11 @@ final class MessageRouterTest extends TestCase
         $message = $this->createMock(GameMessage::class);
         $runner = $this->createMock(MessageRunner::class);
         $runner
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('run');
 
         $router = new MessageRouter();
-        $router->addHandler(get_class($message), function () {
-        });
+        $router->addHandler(get_class($message), function (): void {});
 
         $router->handle($message, $runner);
     }

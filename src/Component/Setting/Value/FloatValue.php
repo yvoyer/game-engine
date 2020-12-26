@@ -36,11 +36,6 @@ final class FloatValue implements SettingValue
         throw new NotSupportedTypeConversion($this->value, 'bool');
     }
 
-    public static function fromMixed($value): SettingValue
-    {
-        return TypeGuesser::fromMixed($value);
-    }
-
     public static function fromFloat(float $value): SettingValue
     {
         return new self($value);

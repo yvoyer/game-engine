@@ -15,8 +15,11 @@ final class QueryRunnerTest extends TestCase
         $runner = new QueryRunner();
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected an instance of Star\GameEngine\Messaging\GameQuery. Got:');
-        $runner->run(function () {
-        }, $this->createMock(GameMessage::class));
+        $runner->run(
+            function (): void {
+            },
+            $this->createMock(GameMessage::class)
+        );
     }
 
     public function test_it_should_execute_command(): void
@@ -25,7 +28,7 @@ final class QueryRunnerTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('pass');
         $runner->run(
-            function () {
+            function (): void {
                 throw new Exception('pass');
             },
             $this->createMock(GameQuery::class)

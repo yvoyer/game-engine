@@ -11,7 +11,7 @@ final class CallbackPluginTest extends TestCase
     {
         $plugin = new CallbackPlugin(
             [
-                'event' => function () {
+                'event' => function (): void {
                 },
             ]
         );
@@ -26,7 +26,7 @@ final class CallbackPluginTest extends TestCase
         $plugin = new CallbackPlugin(
             [],
             [
-                'event' => function () {
+                'event' => function (): void {
                 },
             ]
         );

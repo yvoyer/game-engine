@@ -15,7 +15,7 @@ final class ListenerPriorityTreeTest extends TestCase
         $engine->addListener('event-3', new StubListenerThree(), 50);
         $engine->acceptGameVisitor($dumper = new ListenerPriorityTree());
 
-        $this->assertSame(
+        self::assertSame(
             [
                 'event-1' => [
                     StubListenerOne::class,
@@ -39,7 +39,7 @@ final class ListenerPriorityTreeTest extends TestCase
         $engine->addListener('event', new StubListenerThree(), 80);
         $engine->acceptGameVisitor($dumper = new ListenerPriorityTree());
 
-        $this->assertSame(
+        self::assertSame(
             [
                 'event' => [
                     StubListenerThree::class,

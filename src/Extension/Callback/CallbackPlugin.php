@@ -10,13 +10,17 @@ final class CallbackPlugin implements GamePlugin
     /**
      * @var callable[]
      */
-    private $listeners = [];
+    private $listeners;
 
     /**
      * @var callable[]
      */
-    private $handlers = [];
+    private $handlers;
 
+    /**
+     * @param callable[] $listeners
+     * @param callable[] $handlers
+     */
     public function __construct(array $listeners = [], array $handlers = [])
     {
         $this->listeners = $listeners;

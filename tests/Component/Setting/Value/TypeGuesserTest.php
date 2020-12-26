@@ -8,16 +8,19 @@ use PHPUnit\Framework\TestCase;
 final class TypeGuesserTest extends TestCase
 {
     /**
-     * @param string $type
+     * @param class-string $type
      * @param mixed $raw
      *
      * @dataProvider provideValues
      */
     public function test_it_should_guess_type(string $type, $raw): void
     {
-        $this->assertInstanceOf($type, TypeGuesser::fromMixed($raw));
+        self::assertInstanceOf($type, TypeGuesser::fromMixed($raw));
     }
 
+    /**
+     * @return array[]
+     */
     public static function provideValues(): array
     {
         return [

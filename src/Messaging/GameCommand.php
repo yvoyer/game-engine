@@ -14,5 +14,8 @@ interface GameCommand extends GameMessage
      */
     public function toString(): string;
 
+    /**
+     * @return mixed[]
+     */
     public function payload(): array;
 }

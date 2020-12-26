@@ -11,11 +11,14 @@ final class ObserverIteratorTest extends TestCase
     {
         $observer = $this->createMock(EngineObserver::class);
         $observer
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('notifyListenerDispatch');
 
         $iterator = new ObserverIterator($observer);
-        $iterator->notifyListenerDispatch(function () {
-        }, new EventSpy('name'));
+        $iterator->notifyListenerDispatch(
+            function (): void {
+            },
+            new EventSpy('name')
+        );
     }
 }

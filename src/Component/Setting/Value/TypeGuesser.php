@@ -13,6 +13,10 @@ use function sprintf;
 
 final class TypeGuesser
 {
+    /**
+     * @param mixed $value
+     * @return SettingValue
+     */
     public static function fromMixed($value): SettingValue
     {
         if (is_bool($value)) {

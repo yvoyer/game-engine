@@ -36,11 +36,6 @@ final class StringValue implements SettingValue
         throw new NotSupportedTypeConversion($this->value, 'bool');
     }
 
-    public static function fromMixed($value): SettingValue
-    {
-        return TypeGuesser::fromMixed($value);
-    }
-
     public static function fromString(string $string): SettingValue
     {
         return new self($string);

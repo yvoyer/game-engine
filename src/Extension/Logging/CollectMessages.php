@@ -41,6 +41,9 @@ final class CollectMessages implements EngineObserver
         }
     }
 
+    /**
+     * @return string[]
+     */
     public function getMessages(): array
     {
         return $this->messages;

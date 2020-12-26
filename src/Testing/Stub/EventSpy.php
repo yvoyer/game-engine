@@ -31,6 +31,9 @@ final class EventSpy extends GameEvent
         return $this->name . ' occurred.';
     }
 
+    /**
+     * @return mixed[]
+     */
     public function payload(): array
     {
         $this->addPayload($this->toString());

@@ -34,6 +34,9 @@ final class IntResult implements QueryResult
         return (float) $this->toInt();
     }
 
+    /**
+     * @return mixed[]
+     */
     public function toArray(): array
     {
         throw NotSupportedResultConversion::toArrayConversionNotAllowed($this);

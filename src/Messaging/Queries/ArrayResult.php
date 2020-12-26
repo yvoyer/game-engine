@@ -9,8 +9,11 @@ final class ArrayResult implements QueryResult
     /**
      * @var mixed[]
      */
-    private $result = [];
+    private $result;
 
+    /**
+     * @param mixed[] $result
+     */
     public function __construct(array $result)
     {
         $this->result = $result;
@@ -36,6 +39,9 @@ final class ArrayResult implements QueryResult
         throw NotSupportedResultConversion::toFloatConversionNotAllowed($this);
     }
 
+    /**
+     * @return mixed[]
+     */
     public function toArray(): array
     {
         return $this->result;
@@ -46,7 +52,12 @@ final class ArrayResult implements QueryResult
         throw NotSupportedResultConversion::toObjectConversionNotAllowed($this);
     }
 
-    public static function allInstanceOf(string $class, array $result): self
+    /**
+     * @param class-string $class
+     * @param mixed[] $result
+     * @return QueryResult
+     */
+    public static function allInstanceOf(string $class, array $result): QueryResult
     {
         Assert::allIsInstanceOf($result, $class);
         return new self($result);

@@ -8,7 +8,7 @@ use Star\GameEngine\GameVisitor;
 final class ListenerPriorityTree implements GameVisitor
 {
     /**
-     * @var string[]
+     * @var callable[]
      */
     private $handlers = [];
 
@@ -17,11 +17,17 @@ final class ListenerPriorityTree implements GameVisitor
      */
     private $listeners = [];
 
+    /**
+     * @return callable[]
+     */
     public function getHandlerStructure(): array
     {
         return $this->handlers;
     }
 
+    /**
+     * @return string[][]
+     */
     public function getListenerStructure(): array
     {
         return $this->listeners;

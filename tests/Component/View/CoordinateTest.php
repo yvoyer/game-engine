@@ -29,6 +29,9 @@ final class CoordinateTest extends TestCase
         Coordinate::fromString($string);
     }
 
+    /**
+     * @return string[][]
+     */
     public static function provideInvalidString(): array
     {
         return [

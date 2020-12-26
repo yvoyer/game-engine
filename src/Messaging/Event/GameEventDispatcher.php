@@ -3,7 +3,6 @@
 namespace Star\GameEngine\Messaging\Event;
 
 use InvalidArgumentException;
-use Psr\EventDispatcher\StoppableEventInterface;
 use Star\GameEngine\Engine;
 use Star\GameEngine\GameVisitor;
 use Star\GameEngine\Messaging\EngineObserver;
@@ -32,7 +31,7 @@ final class GameEventDispatcher extends EventDispatcher
         $this->observer = new ObserverIterator();
     }
 
-    protected function callListeners(iterable $listeners, string $eventName, object $event)
+    protected function callListeners(iterable $listeners, string $eventName, object $event): void
     {
         if (! $event instanceof GameEvent) {
             throw new InvalidArgumentException(
@@ -41,7 +40,7 @@ final class GameEventDispatcher extends EventDispatcher
         }
 
         foreach ($listeners as $listener) {
-            if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
+            if ($event->isPropagationStopped()) {
                 break;
             }
 

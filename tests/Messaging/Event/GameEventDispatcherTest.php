@@ -14,14 +14,14 @@ final class GameEventDispatcherTest extends TestCase
     {
         $observer = $this->createMock(EngineObserver::class);
         $observer
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('notifyListenerDispatch');
 
         $engine = $this->createMock(Engine::class);
 
         $dispatcher = new GameEventDispatcher($engine);
         $dispatcher->addObserver($observer);
-        $dispatcher->addListener('event', function () {
+        $dispatcher->addListener('event', function (): void {
         });
 
         $dispatcher->dispatch($this->createMock(GameEvent::class), 'event');
@@ -30,7 +30,7 @@ final class GameEventDispatcherTest extends TestCase
     public function test_it_should_throw_exception_when_invalid_event_given(): void
     {
         $dispatcher = new GameEventDispatcher($this->createMock(Engine::class));
-        $dispatcher->addListener('stdClass', function () {
+        $dispatcher->addListener('stdClass', function (): void {
         });
 
         $this->expectException(InvalidArgumentException::class);
@@ -45,7 +45,7 @@ final class GameEventDispatcherTest extends TestCase
         $dispatcher = new GameEventDispatcher($this->createMock(Engine::class));
         $observer = $this->createMock(EngineObserver::class);
         $observer
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('notifyScheduleCommand');
         $dispatcher->addObserver($observer);
 

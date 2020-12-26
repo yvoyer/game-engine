@@ -2,6 +2,7 @@
 
 namespace Star\GameEngine\Runner;
 
+use RuntimeException;
 use Star\GameEngine\Messaging\GameMessage;
 use Star\GameEngine\Messaging\GameQuery;
 use Star\GameEngine\Messaging\Queries\QueryResult;
@@ -23,8 +24,12 @@ final class QueryRunner implements MessageRunner
         $this->result = $result;
     }
 
-    public function getResult(): ?QueryResult
+    public function getResult(): QueryResult
     {
+        if (! $this->result instanceof QueryResult) {
+            throw new RuntimeException('Query was not run.');
+        }
+
         return $this->result;
     }
 }

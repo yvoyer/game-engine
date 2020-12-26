@@ -4,6 +4,7 @@ namespace Star\GameEngine\Messaging;
 
 use Star\GameEngine\Extension\GamePlugin;
 use Star\GameEngine\GameVisitor;
+use function array_search;
 
 final class MessageLookup implements GameVisitor
 {
@@ -14,7 +15,7 @@ final class MessageLookup implements GameVisitor
 
     public function isRegistered(string $message): bool
     {
-        return false !== \array_search($message, $this->messages);
+        return false !== array_search($message, $this->messages, true);
     }
 
     public function visitPlugin(GamePlugin $plugin): void

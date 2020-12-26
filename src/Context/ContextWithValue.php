@@ -22,6 +22,8 @@ final class ContextWithValue implements ContextBuilder
 
     public function create(ContextRegistry $registry): ContextRegistry
     {
-        return $registry->addContext($this->name, $this->value);
+        $registry->updateContext($this->name, $this->value);
+
+        return $registry;
     }
 }

@@ -11,6 +11,9 @@ final class DoGameCommand implements GameCommand
         return 'Someone did a command.';
     }
 
+    /**
+     * @return mixed[]
+     */
     public function payload(): array
     {
         return [];

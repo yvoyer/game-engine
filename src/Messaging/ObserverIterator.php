@@ -15,7 +15,7 @@ final class ObserverIterator implements EngineObserver
     public function __construct(EngineObserver ...$observers)
     {
         array_map(
-            function (EngineObserver $observer) {
+            function (EngineObserver $observer): void {
                 $this->addObserver($observer);
             },
             $observers

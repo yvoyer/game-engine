@@ -29,7 +29,7 @@ interface QueryResult
     public function toFloat(): float;
 
     /**
-     * @return array
+     * @return mixed[]
      * @throws NotSupportedResultConversion
      */
     public function toArray(): array;

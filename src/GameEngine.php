@@ -16,12 +16,12 @@ use Star\GameEngine\Messaging\Event;
 use Star\GameEngine\Messaging\GameCommand;
 use Star\GameEngine\Messaging\GameQuery;
 use Star\GameEngine\Messaging\Queries\QueryResult;
-use Star\GameEngine\Result\GameResult;
 use Star\GameEngine\Routing\MessageRouter;
 use Star\GameEngine\Runner\CommandRunner;
 use Star\GameEngine\Runner\QueryRunner;
 use function array_search;
 use function get_class;
+use function is_object;
 
 final class GameEngine implements Engine, ContextRegistry
 {
@@ -63,7 +63,15 @@ final class GameEngine implements Engine, ContextRegistry
             $this->listenerPriorities[$eventName] = [];
         }
 
-        $callableClass = get_class($callable);
+        $callableClass = '';
+        if (is_object($callable)) {
+            $callableClass = get_class($callable);
+
+            if ($callable instanceof Closure) {
+                $callableClass = 'AnonymousClosure';
+            }
+        }
+
         foreach ($this->listenerPriorities[$eventName] as $_priority => $listener) {
             if ($priority === $_priority) {
                 throw new DuplicatePriorityForEventListener(
@@ -74,7 +82,7 @@ final class GameEngine implements Engine, ContextRegistry
                 );
             }
 
-            $callableExists = (false !== array_search($callableClass, $this->listenerPriorities[$eventName]));
+            $callableExists = (false !== array_search($callableClass, $this->listenerPriorities[$eventName], true));
             if (! $callable instanceof Closure && $callableExists) {
                 throw new DuplicateListenerForEvent($callableClass, $eventName);
             }
@@ -120,12 +128,6 @@ final class GameEngine implements Engine, ContextRegistry
         $this->router->handle($query, $runner = new QueryRunner());
 
         return $runner->getResult();
-    }
-
-    public function getGameResult(): GameResult
-    {
-        $result = new GameResult();
-        $this->acceptGameVisitor($result);
     }
 
     public function addContextBuilder(ContextBuilder $builder): void

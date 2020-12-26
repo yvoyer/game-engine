@@ -16,9 +16,12 @@ final class SettingValueTest extends TestCase
     final public function test_supported_value_is_castable_to_string(string $expected, $rawValue): void
     {
         $value = $this->createValue($rawValue);
-        $this->assertSame($expected, $value->toString());
+        self::assertSame($expected, $value->toString());
     }
 
+    /**
+     * @return array[]
+     */
     public static function provideSupportedStringCast(): array
     {
         return [
@@ -42,9 +45,12 @@ final class SettingValueTest extends TestCase
     final public function test_supported_value_is_castable_to_int(int $expected, $rawValue): void
     {
         $value = $this->createValue($rawValue);
-        $this->assertSame($expected, $value->toInt());
+        self::assertSame($expected, $value->toInt());
     }
 
+    /**
+     * @return array[]
+     */
     public static function provideSupportedIntCast(): array
     {
         return [
@@ -65,9 +71,12 @@ final class SettingValueTest extends TestCase
     final public function test_supported_value_is_castable_to_bool(bool $expected, $rawValue): void
     {
         $value = $this->createValue($rawValue);
-        $this->assertSame($expected, $value->toBool());
+        self::assertSame($expected, $value->toBool());
     }
 
+    /**
+     * @return array[]
+     */
     public static function provideSupportedBooleanCast(): array
     {
         return [
@@ -85,9 +94,12 @@ final class SettingValueTest extends TestCase
     final public function test_supported_value_is_castable_to_float(float $expected, $rawValue): void
     {
         $value = $this->createValue($rawValue);
-        $this->assertSame($expected, $value->toFloat());
+        self::assertSame($expected, $value->toFloat());
     }
 
+    /**
+     * @return array[]
+     */
     public static function provideSupportedFloatCast(): array
     {
         return [
@@ -99,6 +111,10 @@ final class SettingValueTest extends TestCase
         ];
     }
 
+    /**
+     * @param mixed $value
+     * @return SettingValue
+     */
     final private function createValue($value): SettingValue
     {
         return TypeGuesser::fromMixed($value);

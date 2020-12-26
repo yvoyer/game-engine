@@ -14,7 +14,7 @@ final class ExecuteCallbackHandlerTest extends TestCase
         $this->expectExceptionMessage('pass');
         $handler(
             new ExecuteCallback(
-                function () {
+                function (): void {
                     throw new Exception('pass');
                 }
             )

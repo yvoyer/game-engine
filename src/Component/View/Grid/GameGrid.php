@@ -4,6 +4,7 @@ namespace Star\GameEngine\Component\View\Grid;
 
 use Star\GameEngine\Component\Token\GameToken;
 use Star\GameEngine\Component\View\Coordinate;
+use Star\GameEngine\Component\View\ViewRenderer;
 
 interface GameGrid
 {
@@ -14,4 +15,6 @@ interface GameGrid
     public function placeToken(Coordinate $coordinate, GameToken $token): void;
 
     public function acceptGridVisitor(GridVisitor $visitor): void;
+
+    public function render(ViewRenderer $renderer): void;
 }

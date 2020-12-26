@@ -2,7 +2,6 @@
 
 namespace Star\GameEngine\Component\Setting\Port\Persistence\InMemory;
 
-use ReflectionClass;
 use Star\GameEngine\Component\Setting\NotSupportedSetting;
 use Star\GameEngine\Component\Setting\SettingStore;
 use Star\GameEngine\Component\Setting\SettingValue;
@@ -14,8 +13,11 @@ final class SettingCollection implements SettingStore
     /**
      * @var SettingValue[] Indexed by id
      */
-    private $values = [];
+    private $values;
 
+    /**
+     * @param SettingValue[] $values Indexed by id
+     */
     public function __construct(array $values)
     {
         $this->values = $values;
@@ -30,11 +32,5 @@ final class SettingCollection implements SettingStore
         }
 
         return $this->values[$setting];
-    }
-
-    public static function fromConstants(string $class): self
-    {
-        $reflection = new ReflectionClass($class);
-        return new self($reflection->getConstants());
     }
 }

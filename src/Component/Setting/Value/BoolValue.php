@@ -36,11 +36,6 @@ final class BoolValue implements SettingValue
         return $this->value;
     }
 
-    public static function fromMixed($value): SettingValue
-    {
-        return TypeGuesser::fromMixed($value);
-    }
-
     public static function fromBool(bool $value): SettingValue
     {
         return new self($value);

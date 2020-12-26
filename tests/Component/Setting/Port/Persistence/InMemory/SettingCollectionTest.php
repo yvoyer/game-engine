@@ -16,7 +16,7 @@ final class SettingCollectionTest extends TestCase
             ]
         );
 
-        $this->assertSame('value', $settings->getValue('id')->toString());
+        self::assertSame('value', $settings->getValue('id')->toString());
     }
 
     public function test_it_should_throw_exception_when_not_defined(): void
