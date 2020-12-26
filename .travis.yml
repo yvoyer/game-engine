@@ -1,0 +1,18 @@
+language: php
+
+php:
+  - 7.3
+  - 7.4
+
+before_script:
+  - composer -n --prefer-source install
+
+script:
+  - bin/phpunit
+  - bin/phpcs
+  - bin/phpstan analyze phpstan.neon
+  - bin/infection --formatter=progress
+
+env:
+  global:
+    - XDEBUG_MODE=coverage
