@@ -12,3 +12,7 @@ script:
   - bin/phpcs
   - bin/phpstan analyze phpstan.neon
   - bin/infection --formatter=progress
+
+env:
+  global:
+    - XDEBUG_MODE=coverage
