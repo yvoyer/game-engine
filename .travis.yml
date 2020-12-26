@@ -10,5 +10,5 @@ before_script:
 script:
   - bin/phpunit
   - bin/phpcs
-  - bin/phpstan analyse phpstan.neon
+  - bin/phpstan analyze phpstan.neon
   - bin/infection --formatter=progress

@@ -5,6 +5,7 @@
             "src"
         ]
     },
+    "tmpDir": "build",
     "logs": {
         "text": "infection-log.txt"
     }
