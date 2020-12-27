@@ -5,6 +5,9 @@ namespace Star\GameEngine\Examples;
 use Assert\Assertion;
 use PHPStan\Testing\TestCase;
 use RuntimeException;
+use Star\GameEngine\Builder\GameBuilder;
+use Star\GameEngine\Extension\Interpretation\Command\RunGameFunction;
+use Star\GameEngine\Extension\Interpretation\GameTriggerStore;
 use Star\GameEngine\GameEngine;
 use Star\GameEngine\Messaging\EngineObserver;
 use Star\GameEngine\Messaging\Event\GameEvent;
@@ -33,27 +36,6 @@ final class RockPaperScissorTest extends TestCase
 
         return $observer;
     }
-
-//    private function createGameWithBuilder(): Engine
-//    {
-//        $handler = function(RockPaperScissorAction $action): void {
-//            \var_dump($action);
-//        };
-//        $this->game = GameBuilder::newGame('Rock Paper Scissor')
-//            ->addHandler(PlayRock::class, $handler)
-//            ->addHandler(PlayPaper::class, $handler)
-//            ->addHandler(PlayScissor::class, $handler)
-//            ->addFunction(
-//                'endGame',
-//                function () {
-//
-//                }
-//            )
-//            ->addTrigger('true = isWon()', 'endGame()')
-////            ->withPhase('main')
-////            ->endPhase()
-//            ->createGame();
-//    }
 
     public function test_it_should_end_in_a_win(): void
     {
@@ -92,6 +74,106 @@ final class RockPaperScissorTest extends TestCase
         self::assertFalse($result->isWon());
         self::assertSame('TIE', $result->getResult());
     }
+
+    private function runGameWithBuilder(string $playerOneAction, string $playerTwoAction): RockPaperScissorObserver
+    {
+        $choices = [
+            'P1' => $playerOneAction,
+            'P2' => $playerTwoAction,
+        ];
+
+        $result = new RockPaperScissorObserver();
+        $game = GameBuilder::newGame('Rock Paper Scissor')
+            ->addConstant('P1', 'Player 1')
+            ->addConstant('P2', 'Player 2')
+            ->addConstant('ROCK', 'ROCK')
+            ->addConstant('PAPER', 'PAPER')
+            ->addConstant('SCISSOR', 'SCISSOR')
+            ->addFunction(
+                'choiceOfPlayer',
+                function (string $playerId) use ($choices): string {
+                    return $choices[$playerId];
+                }
+            )
+            ->addFunction(
+                'endInWin',
+                function (string $playerId) use ($result): void {
+                    $result->setWinner(PlayerId::fromString($playerId));
+                }
+            )
+            ->addFunction(
+                'endInTie',
+                function () use ($result): void {
+                    // do nothing, default is tie
+                }
+            )
+            ->addTrigger(
+                'choiceOfPlayer(P1) = choiceOfPlayer(P2)',
+                'endInTie()',
+                GameTriggerStore::END_OF_TURN,
+                'Tie resolver'
+            )
+            ->addTrigger(
+                'choiceOfPlayer(P1) = ROCK and choiceOfPlayer(P2) = SCISSOR',
+                'endInWin(P1)',
+                GameTriggerStore::END_OF_TURN,
+                'Rock wins against scissor for player 1'
+            )
+            ->addTrigger(
+                'choiceOfPlayer(P1) = PAPER and choiceOfPlayer(P2) = ROCK',
+                'endInWin(P1)',
+                GameTriggerStore::END_OF_TURN,
+                'Paper wins against rock for player 1'
+            )
+            ->addTrigger(
+                'choiceOfPlayer(P1) = SCISSOR and choiceOfPlayer(P2) = PAPER',
+                'endInWin(P1)',
+                GameTriggerStore::END_OF_TURN,
+                'Scissor wins against paper for player 1'
+            )
+            ->addTrigger(
+                'choiceOfPlayer(P2) = ROCK and choiceOfPlayer(P1) = SCISSOR',
+                'endInWin(P2)',
+                GameTriggerStore::END_OF_TURN,
+                'Rock wins against scissor for player 2'
+            )
+            ->addTrigger(
+                'choiceOfPlayer(P2) = PAPER and choiceOfPlayer(P1) = ROCK',
+                'endInWin(P2)',
+                GameTriggerStore::END_OF_TURN,
+                'Paper wins against rock for player 2'
+            )
+            ->addTrigger(
+                'choiceOfPlayer(P2) = SCISSOR and choiceOfPlayer(P1) = PAPER',
+                'endInWin(P2)',
+                GameTriggerStore::END_OF_TURN,
+                'Scissor wins against paper for player 2'
+            )
+            ->createGame();
+        $game->dispatchCommand(new RunGameFunction('play', [$playerOneAction, $playerTwoAction]));
+
+        return $result;
+    }
+
+    public function test_it_should_result_in_win_using_the_game_builder(): void {
+        $resultOne = $this->runGameWithBuilder('SCISSOR', 'PAPER');
+        self::assertTrue($resultOne->isWon());
+        self::assertSame('p1', $resultOne->getResult());
+
+        $resultTwo = $this->runGameWithBuilder('ROCK', 'PAPER');
+        self::assertTrue($resultTwo->isWon());
+        self::assertSame('p2', $resultTwo->getResult());
+
+        $resultThree = $this->runGameWithBuilder('SCISSOR', 'ROCK');
+        self::assertTrue($resultThree->isWon());
+        self::assertSame('p2', $resultThree->getResult());
+    }
+
+    public function test_it_should_result_in_tie_using_the_game_builder(): void {
+        $result = $this->runGameWithBuilder('SCISSOR', 'SCISSOR');
+        self::assertFalse($result->isWon());
+        self::assertSame('TIE', $result->getResult());
+    }
 }
 
 final class RockPaperScissorObserver implements EngineObserver
@@ -104,6 +186,11 @@ final class RockPaperScissorObserver implements EngineObserver
     public function isWon(): bool
     {
         return $this->winner instanceof PlayerId;
+    }
+
+    public function setWinner(PlayerId $id): void
+    {
+        $this->winner = $id;
     }
 
     /**
@@ -131,13 +218,13 @@ final class RockPaperScissorObserver implements EngineObserver
 
         if (isset($actionMap[RockPaperScissorAction::ROCK], $actionMap[RockPaperScissorAction::PAPER])) {
             Assertion::count($actionMap[RockPaperScissorAction::PAPER], 1);
-            $this->winner = array_pop($actionMap[RockPaperScissorAction::PAPER]);
+            $this->setWinner(array_pop($actionMap[RockPaperScissorAction::PAPER]));
         } else if (isset($actionMap[RockPaperScissorAction::SCISSOR], $actionMap[RockPaperScissorAction::PAPER])) {
             Assertion::count($actionMap[RockPaperScissorAction::SCISSOR], 1);
-            $this->winner = array_pop($actionMap[RockPaperScissorAction::SCISSOR]);
+            $this->setWinner(array_pop($actionMap[RockPaperScissorAction::SCISSOR]));
         } else if (isset($actionMap[RockPaperScissorAction::SCISSOR], $actionMap[RockPaperScissorAction::ROCK])) {
             Assertion::count($actionMap[RockPaperScissorAction::ROCK], 1);
-            $this->winner = array_pop($actionMap[RockPaperScissorAction::ROCK]);
+            $this->setWinner(array_pop($actionMap[RockPaperScissorAction::ROCK]));
         }
     }
 
