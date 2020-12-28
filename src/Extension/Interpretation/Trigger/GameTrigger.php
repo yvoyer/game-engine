@@ -2,9 +2,9 @@
 
 namespace Star\GameEngine\Extension\Interpretation\Trigger;
 
-use Star\GameEngine\Extension\Interpretation\GameTrigger;
+use Star\GameEngine\Engine;
 
-final class TriggerReference implements GameTrigger
+final class GameTrigger
 {
     /**
      * @var TriggerCondition
@@ -36,5 +36,22 @@ final class TriggerReference implements GameTrigger
         $this->effect = $effect;
         $this->frequency = $frequency;
         $this->description = $description;
+    }
+
+    public function attachToEngine(
+        Engine $engine,
+        int $priority
+    ): void {
+        $engine->addListener(
+            $this->frequency->toString(),
+            function () use ($engine): void {
+                $result = $engine->dispatchQuery($this->condition);
+
+                if ($result->toBool()) {
+                    $this->effect->execute($engine);
+                }
+            },
+            $priority
+        );
     }
 }

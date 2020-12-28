@@ -21,4 +21,14 @@ final class StringConstant implements GameConstant
         $this->name = $name;
         $this->value = $value;
     }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function __invoke(): string
+    {
+        return $this->value;
+    }
 }

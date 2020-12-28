@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Star\GameEngine\Extension\Interpretation\Command;
+namespace Star\GameEngine\Extension\Interpretation\Effect;
 
 use Star\GameEngine\Messaging\GameCommand;
 
@@ -11,25 +11,14 @@ final class RunGameFunction implements GameCommand
      */
     private $function;
 
-    /**
-     * @var mixed
-     */
-    private $arguments;
-
-    public function __construct(string $function, array $arguments = [])
+    public function __construct(string $function)
     {
         $this->function = $function;
-        $this->arguments = $arguments;
     }
 
     public function getFunction(): string
     {
         return $this->function;
-    }
-
-    public function getArguments(): array
-    {
-        return $this->arguments;
     }
 
     public function toString(): string

@@ -2,6 +2,8 @@
 
 namespace Star\GameEngine\Extension\Interpretation;
 
-interface GameTrigger
+use RuntimeException;
+
+final class FunctionRuntimeError extends RuntimeException
 {
 }

@@ -7,6 +7,8 @@ use Star\GameEngine\Messaging\GameMessage;
 use Star\GameEngine\Messaging\GameQuery;
 use Star\GameEngine\Messaging\Queries\QueryResult;
 use Webmozart\Assert\Assert;
+use function get_class;
+use function sprintf;
 
 final class QueryRunner implements MessageRunner
 {
@@ -20,7 +22,14 @@ final class QueryRunner implements MessageRunner
         Assert::isInstanceOf($message, GameQuery::class);
         $result = $handler($message);
 
-        Assert::isInstanceOf($result, QueryResult::class);
+        Assert::isInstanceOf(
+            $result,
+            QueryResult::class,
+            sprintf(
+                'The query handler for the query "%s" must return the QueryResult.',
+                get_class($message)
+            )
+        );
         $this->result = $result;
     }
 

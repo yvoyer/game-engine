@@ -4,27 +4,25 @@ namespace Star\GameEngine\Extension\Interpretation;
 
 use Star\GameEngine\Engine;
 use Star\GameEngine\Extension\GamePlugin;
-use Star\GameEngine\Extension\Interpretation\Command\RunGameFunction;
-use Star\GameEngine\Extension\Interpretation\Command\RunGameFunctionHandler;
+use Star\GameEngine\Extension\Interpretation\Effect\RunGameFunction;
+use Star\GameEngine\Extension\Interpretation\Effect\RunGameFunctionHandler;
+use Star\GameEngine\Extension\Interpretation\Trigger\TriggerCondition;
+use Star\GameEngine\Extension\Interpretation\Trigger\TriggerConditionHandler;
 use Twig\Environment;
+use Twig\Extension\DebugExtension;
+use Twig\Extension\StringLoaderExtension;
 use Twig\Loader\FilesystemLoader;
 
 final class InterpreterPlugin implements GamePlugin
 {
     /**
-     * @var GameContainer
+     * @var GameExtension
      */
     private $container;
 
-    /**
-     * @var bool
-     */
-    private $throwTwigException;
-
-    public function __construct(GameContainer $container, bool $throwException = true)
+    public function __construct(GameExtension $container)
     {
         $this->container = $container;
-        $this->throwTwigException = $throwException;
     }
 
     public function attach(Engine $engine): void
@@ -41,10 +39,27 @@ final class InterpreterPlugin implements GamePlugin
             ]
         );
 
-        $environment->addExtension($this->container->createExtension());
+        $constants = $this->container->getConstants();
+        foreach ($constants as $constant) {
+            $environment->addGlobal($constant->getName(), $constant());
+        }
+
+        $environment->addExtension($this->container);
+        $environment->addExtension(new StringLoaderExtension());
+        $environment->addExtension(new DebugExtension());
+
         $engine->addHandler(
             RunGameFunction::class,
-            new RunGameFunctionHandler($environment, $this->throwTwigException)
+            new RunGameFunctionHandler($environment)
         );
+        $engine->addHandler(
+            TriggerCondition::class,
+            new TriggerConditionHandler($environment)
+        );
+
+        $triggers = $this->container->getTriggers();
+        foreach ($triggers as $priority => $trigger) {
+            $trigger->attachToEngine($engine, $priority);
+        }
     }
 }

@@ -2,58 +2,42 @@
 
 namespace Star\GameEngine\Extension\Interpretation;
 
+use LogicException;
 use PHPUnit\Framework\TestCase;
-use Star\GameEngine\Extension\Interpretation\Command\RunGameFunction;
+use Star\GameEngine\Engine;
+use Star\GameEngine\Extension\Interpretation\Effect\RunGameFunction;
 use Star\GameEngine\GameEngine;
 
 final class InterpreterPluginTest extends TestCase
 {
-    public function test_it_should_throw_exception_when_function_is_not_callable(): void
+    public function test_it_should_throw_exception_when_function_is_not_defined(): void
     {
-        $container = new GameContainer();
-        $container->addFunction(new class implements GameFunction {
-            public function getName(): string
-            {
-                return 'hello';
-            }
-        });
-
         $engine = new GameEngine();
-        $engine->addPlugin(new InterpreterPlugin($container, false));
+        $engine->addPlugin(new InterpreterPlugin(new GameExtension()));
 
-        $this->expectException(NotCallableFunction::class);
-        $this->expectExceptionMessage('dada');
-        $engine->dispatchCommand(new RunGameFunction('hello'));
+        $this->expectException(FunctionRuntimeError::class);
+        $this->expectExceptionMessage('Unknown "hello" function. in source: "{{ hello() }}".');
+        $engine->dispatchCommand(new RunGameFunction('hello()'));
     }
 
-    public function test_it_should_interpret_functions(): void
+    public function test_it_should_throw_exception_when_non_twig_error(): void
     {
-        $container = new GameContainer();
-#        $container->addFunction(new class implements GameFunction {
- #           public function getName(): string
-  #          {
-   #             return 'hello';
-    #        }
-     #   });
-
         $engine = new GameEngine();
-        $engine->addPlugin(new InterpreterPlugin($container));
-        $engine->dispatchCommand(new RunGameFunction('hello'));
-    }
+        $extension = new GameExtension();
+        $extension->addFunction(
+            new CallableFunction(
+                'test',
+                function (): void {
+                    throw new LogicException('error');
+                }
+            )
+        );
+        $engine->addPlugin(new InterpreterPlugin($extension));
 
-    public function test_it_should_interpret_functions_with_arguments(): void
-    {
-        $container = new GameContainer();
-        $container->addFunction(new class implements GameFunction {
-            public function getName(): string
-            {
-                return 'hello';
-            }
-        });
-
-        $engine = new GameEngine();
-        $engine->addPlugin(new InterpreterPlugin($container));
-        $engine->dispatchCommand(new RunGameFunction('hello', ['name' => 'Joe']));
-        $this->fail('todo');
+        $this->expectException(FunctionRuntimeError::class);
+        $this->expectExceptionMessage(
+            'An exception has been thrown during the rendering of a template ("error"). in source: "{{ test() }}".'
+        );
+        $engine->dispatchCommand(new RunGameFunction('test()'));
     }
 }

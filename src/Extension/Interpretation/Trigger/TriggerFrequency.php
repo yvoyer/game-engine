@@ -5,17 +5,17 @@ namespace Star\GameEngine\Extension\Interpretation\Trigger;
 final class TriggerFrequency
 {
     /**
-     * @var int
+     * @var string
      */
-    private $value;
+    private $eventName;
 
-    private function __construct(int $value)
+    public function __construct(string $eventName)
     {
-        $this->value = $value;
+        $this->eventName = $eventName;
     }
 
-    public static function fromInt(int $int): self
+    public function toString(): string
     {
-        return new self($int);
+        return $this->eventName;
     }
 }

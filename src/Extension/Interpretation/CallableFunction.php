@@ -20,6 +20,17 @@ final class CallableFunction implements GameFunction
         $this->callable = $callable;
     }
 
+    /**
+     * @param mixed ...$arguments
+     * @return mixed
+     */
+    public function __invoke(...$arguments)
+    {
+        $callable = $this->callable;
+
+        return $callable(...$arguments);
+    }
+
     public function getName(): string
     {
         return $this->name;

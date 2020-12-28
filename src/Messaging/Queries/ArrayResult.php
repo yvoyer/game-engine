@@ -59,7 +59,12 @@ final class ArrayResult implements QueryResult
      */
     public static function allInstanceOf(string $class, array $result): QueryResult
     {
-        Assert::allIsInstanceOf($result, $class);
+        Assert::allIsInstanceOf(
+            $result,
+            $class,
+            'Expected a collection of instances of "%2$s". Got: "%s".'
+        );
+
         return new self($result);
     }
 }
