@@ -9,7 +9,6 @@ use Star\GameEngine\Messaging\Event\GameEvent;
 use Star\GameEngine\Messaging\GameCommand;
 use Star\GameEngine\Messaging\GameQuery;
 use Star\GameEngine\Messaging\Queries\QueryResult;
-use Star\GameEngine\Result\GameResult;
 
 interface Engine
 {

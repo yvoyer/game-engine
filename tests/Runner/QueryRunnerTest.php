@@ -5,6 +5,7 @@ namespace Star\GameEngine\Runner;
 use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Star\GameEngine\Messaging\GameMessage;
 use Star\GameEngine\Messaging\GameQuery;
 
@@ -33,5 +34,14 @@ final class QueryRunnerTest extends TestCase
             },
             $this->createMock(GameQuery::class)
         );
+    }
+
+    public function test_it_should_throw_exception_when_query_was_not_run(): void
+    {
+        $runner = new QueryRunner();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Query was not run.');
+        $runner->getResult();
     }
 }

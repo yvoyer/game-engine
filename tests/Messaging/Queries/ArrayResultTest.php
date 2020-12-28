@@ -2,6 +2,8 @@
 
 namespace Star\GameEngine\Messaging\Queries;
 
+use DateTimeInterface;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class ArrayResultTest extends TestCase
@@ -13,6 +15,13 @@ final class ArrayResultTest extends TestCase
 
         $result = new ArrayResult([1, 2, 3]);
         self::assertSame([1, 2, 3], $result->toArray());
+    }
+
+    public function test_throw_exception_when_array_do_not_contains_correct_instances(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected a collection of instances of "DateTimeInterface". Got: "stdClass".');
+        ArrayResult::allInstanceOf(DateTimeInterface::class, [(object) []]);
     }
 
     public function test_should_not_support_bool_return_type(): void
@@ -53,5 +62,13 @@ final class ArrayResultTest extends TestCase
 
         $this->expectException(NotSupportedResultConversion::class);
         $result->toObject();
+    }
+
+    public function test_should_not_support_array_of_instances(): void
+    {
+        self::assertSame(
+            [],
+            ArrayResult::allInstanceOf(DateTimeInterface::class, [])->toArray()
+        );
     }
 }
