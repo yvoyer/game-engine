@@ -117,11 +117,6 @@ final class CardBuilder
                 $this->behaviors = $behaviors;
             }
 
-            public function isValid(ErrorReader $errors = null): bool
-            {
-                return true;
-            }
-
             public function acceptCardVisitor(CardVisitor $visitor): void
             {
                 $this->variables->acceptCardVisitor($visitor);

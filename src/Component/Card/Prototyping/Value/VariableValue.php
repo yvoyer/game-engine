@@ -8,4 +8,5 @@ interface VariableValue
 {
     public function acceptCardVisitor(string $name, CardVisitor $visitor): void;
     public function toTypedString(): string;
+    public function toString(): string;
 }

@@ -2,6 +2,8 @@
 
 namespace Star\GameEngine\Component\Card;
 
-interface ErrorReader
+use RuntimeException;
+
+final class EmptyDeck extends RuntimeException
 {
 }

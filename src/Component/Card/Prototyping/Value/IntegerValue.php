@@ -26,6 +26,11 @@ final class IntegerValue implements VariableValue
         return \sprintf('integer(%s)', $this->value);
     }
 
+    public function toString(): string
+    {
+        return (string) $this->value;
+    }
+
     public static function fromInt(int $value): self
     {
         return new self($value);

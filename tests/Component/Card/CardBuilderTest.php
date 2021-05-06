@@ -17,8 +17,6 @@ final class CardBuilderTest extends TestCase
 
         self::assertCount(0, $reader->getVariables());
         self::assertCount(0, $reader->getBehaviors());
-        self::assertTrue($card->isValid($this->createMock(ErrorReader::class)));
-        self::assertTrue($card->isValid());
     }
 
     public function test_it_should_define_custom_variable(): void
@@ -27,7 +25,6 @@ final class CardBuilderTest extends TestCase
             ->withTextVariable('name', 'value')
             ->buildCard();
 
-        self::assertTrue($card->isValid());
         self::assertSame('string(value)', $card->getVariableValue('name')->toTypedString());
     }
 

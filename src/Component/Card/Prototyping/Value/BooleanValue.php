@@ -26,6 +26,11 @@ final class BooleanValue implements VariableValue
         return \sprintf('boolean(%s)', ($this->value) ? 'true' : 'false');
     }
 
+    public function toString(): string
+    {
+        return ($this->value) ? '1' : '0';
+    }
+
     public static function fromBoolean(bool $value): self
     {
         return new self($value);
