@@ -4,11 +4,7 @@ namespace Star\GameEngine\Component\Card\Prototyping\PlaceHolding;
 
 use Star\GameEngine\Component\Card\Prototyping\VariableBuilder;
 
-/**
- * @internal This class is internal to the CardBuilder class.
- * @see CardBuilder
- */
-final class TextPlaceholder implements TemplatePlaceholder
+final class BooleanPlaceholder implements TemplatePlaceholder
 {
     /**
      * @var string
@@ -23,7 +19,7 @@ final class TextPlaceholder implements TemplatePlaceholder
     public function buildVariables(VariableBuilder $builder, PlaceholderData $data): array
     {
         return [
-            $builder->textVariable($this->name, $data->getStringValue($this->name)),
+            $builder->booleanVariable($this->name, $data->getBooleanValue($this->name)),
         ];
     }
 }

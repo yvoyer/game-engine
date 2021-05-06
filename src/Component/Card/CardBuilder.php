@@ -6,13 +6,18 @@ use Star\GameEngine\Component\Card\Prototyping\CardBehavior;
 use Star\GameEngine\Component\Card\Prototyping\CardVariable;
 use Star\GameEngine\Component\Card\Prototyping\MapOfBehaviors;
 use Star\GameEngine\Component\Card\Prototyping\MapOfVariables;
+use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\BooleanPlaceholder;
+use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\IntegerPlaceholder;
 use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\PlaceholderBuilder;
 use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\PlaceholderData;
 use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\TemplatePlaceholder;
 use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\TextPlaceholder;
+use Star\GameEngine\Component\Card\Prototyping\Type\BooleanType;
+use Star\GameEngine\Component\Card\Prototyping\Type\IntegerType;
 use Star\GameEngine\Component\Card\Prototyping\Type\TextType;
 use Star\GameEngine\Component\Card\Prototyping\Type\VariableType;
 use Star\GameEngine\Component\Card\Prototyping\Value\VariableValue;
+use Star\GameEngine\Component\Card\Prototyping\VariableBuilder;
 
 final class CardBuilder
 {
@@ -40,6 +45,16 @@ final class CardBuilder
         return $this->withPlaceholder(new TextPlaceholder($name));
     }
 
+    public function withIntegerPlaceholder(string $name): PlaceholderBuilder
+    {
+        return $this->withPlaceholder(new IntegerPlaceholder($name));
+    }
+
+    public function withBooleanPlaceholder(string $name): PlaceholderBuilder
+    {
+        return $this->withPlaceholder(new BooleanPlaceholder($name));
+    }
+
     public function withPlaceholder(TemplatePlaceholder $placeholder): PlaceholderBuilder
     {
         $this->placeholders[] = $placeholder;
@@ -52,18 +67,32 @@ final class CardBuilder
         return $this->withVariable($name, new TextType(), $value);
     }
 
-    public function withVariable(string $name, VariableType $type, string $value): self
+    public function withIntegerVariable(string $name, int $value): self
     {
-        $this->variables[] = new CardVariable($name, $type->stringToVariableValue($value));
+        return $this->withVariable($name, new IntegerType(), (string) $value);
+    }
+
+    public function withBooleanVariable(string $name, bool $value): self
+    {
+        return $this->withVariable($name, new BooleanType(), $value);
+    }
+
+    public function withVariable(string $name, VariableType $type, $value): self
+    {
+        $this->variables[] = new CardVariable($name, $type->createValueFromMixed($value));
 
         return $this;
     }
 
     public function buildCard(array $placeholderData = []): Card
     {
+        $variableBuilder = new VariableBuilder();
         $data = PlaceholderData::fromArray($placeholderData);
         foreach ($this->placeholders as $placeholder) {
-            $this->variables = \array_merge($this->variables, $placeholder->buildVariables($data));
+            $this->variables = \array_merge(
+                $this->variables,
+                $placeholder->buildVariables($variableBuilder, $data)
+            );
         }
 
         return new class(

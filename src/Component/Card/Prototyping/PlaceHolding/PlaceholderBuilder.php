@@ -5,6 +5,10 @@ namespace Star\GameEngine\Component\Card\Prototyping\PlaceHolding;
 use Star\GameEngine\Component\Card\Card;
 use Star\GameEngine\Component\Card\CardBuilder;
 
+/**
+ * @internal This class is internal to the CardBuilder class.
+ * @see CardBuilder
+ */
 final class PlaceholderBuilder
 {
     /**

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Star\GameEngine\Component\Card\Prototyping;
+namespace Star\GameEngine\Component\Card\Prototyping\PlaceHolding;
 
 interface InvalidPlaceholderConstraint
 {

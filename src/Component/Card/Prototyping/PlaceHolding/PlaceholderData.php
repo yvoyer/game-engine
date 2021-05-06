@@ -2,6 +2,12 @@
 
 namespace Star\GameEngine\Component\Card\Prototyping\PlaceHolding;
 
+use Assert\Assert;
+use Assert\Assertion;
+
+/**
+ * @api
+ */
 final class PlaceholderData
 {
     /**
@@ -14,23 +20,59 @@ final class PlaceholderData
         $this->data = $data;
     }
 
+    public function getIntegerValue(string $key): int
+    {
+        Assertion::integerish(
+            $value = $this->getMixedValue($key),
+            'Value "%s" for key "' . $key . '" is not castable to integer.'
+        );
+
+        return (int) $value;
+    }
+
     public function getStringValue(string $key): string
     {
+        return (string) $this->getMixedValue($key);
+    }
+
+    public function getBooleanValue(string $key): bool
+    {
+        Assertion::boolean($value = $this->getMixedValue($key));
+
+        return $value;
+    }
+
+    private function getMixedValue(string $key)
+    {
+        if (! $this->hasKey($key)) {
+            throw new MissingPlaceholderValue($key, $this->toJson());
+        }
+
         return $this->data[$key];
     }
 
-    public function hasKey(string $key): bool
+    private function hasKey(string $key): bool
     {
         return \array_key_exists($key, $this->data);
     }
 
-    public function toJson(): string
+    private function toJson(): string
     {
         return \json_encode($this->data);
     }
 
     public static function fromArray(array $data): self
     {
+        Assert::that($data)
+            ->all()
+            ->notNull()
+            ->scalar()
+            ;
         return new self($data);
+    }
+
+    public static function noData(): self
+    {
+        return self::fromArray([]);
     }
 }

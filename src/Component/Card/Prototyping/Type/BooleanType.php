@@ -2,23 +2,19 @@
 
 namespace Star\GameEngine\Component\Card\Prototyping\Type;
 
-use Star\GameEngine\Component\Card\Prototyping\Value\StringValue;
+use Star\GameEngine\Component\Card\Prototyping\Value\BooleanValue;
 use Star\GameEngine\Component\Card\Prototyping\Value\VariableValue;
 
-/**
- * @internal This class is internal to the CardBuilder class.
- * @see CardBuilder
- */
-final class TextType implements VariableType
+final class BooleanType implements VariableType
 {
     public function createValueFromMixed($value): VariableValue
     {
-        return $this->createValueFromString($value);
+        return $this->createValueFromBoolean($value);
     }
 
     public function createValueFromString(string $value): VariableValue
     {
-        return StringValue::fromString($value);
+        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
     }
 
     public function createValueFromInteger(int $value): VariableValue
@@ -28,6 +24,6 @@ final class TextType implements VariableType
 
     public function createValueFromBoolean(bool $value): VariableValue
     {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+        return BooleanValue::fromBoolean($value);
     }
 }

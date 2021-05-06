@@ -9,8 +9,10 @@ use Star\GameEngine\Component\Card\Prototyping\Value\VariableValue;
  * Object that represents the property of a card that may change during a game.
  * The property do not have any special effect on the game, it is meant to
  * keep track of a value for behaviors.
- *
  * @see CardBehavior
+ *
+ * @internal This class is internal to the CardBuilder class.
+ * @see CardBuilder
  */
 final class CardVariable
 {
