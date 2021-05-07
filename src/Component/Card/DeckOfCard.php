@@ -3,8 +3,10 @@
 namespace Star\GameEngine\Component\Card;
 
 use Countable;
+use Star\GameEngine\Component\Card\Shuffling\RandomShuffle;
+use Star\GameEngine\Component\Card\Shuffling\ShuffleStrategy;
+use function array_merge;
 use function array_pop;
-use function array_reverse;
 use function count;
 use function sprintf;
 
@@ -23,7 +25,16 @@ final class DeckOfCard implements Countable
     public function __construct(string $name, Card ...$cards)
     {
         $this->name = $name;
-        $this->cards = array_reverse($cards);
+        $this->cards = $cards;
+    }
+
+    public function acceptDeckVisitor(DeckVisitor $visitor): void
+    {
+        foreach ($this->cards as $card) {
+            if ($visitor->visitCard($card)) {
+                break;
+            }
+        }
     }
 
     public function drawTopCard(): Card
@@ -47,13 +58,18 @@ final class DeckOfCard implements Countable
         return new self($this->name, ...$cards);
     }
 
-    public function acceptDeckVisitor(DeckVisitor $visitor): void
+    public function merge(DeckOfCard $deck): self
     {
-        foreach ($this->cards as $card) {
-            if ($visitor->visitCard($card)) {
-                break;
-            }
+        return new self($this->name, ...array_merge($this->cards, $deck->cards));
+    }
+
+    public function shuffle(ShuffleStrategy $strategy = null): self
+    {
+        if (! $strategy) {
+            $strategy = new RandomShuffle();
         }
+
+        return new DeckOfCard($this->name, ...$strategy->shuffleDeck(...$this->cards));
     }
 
     public function count(): int

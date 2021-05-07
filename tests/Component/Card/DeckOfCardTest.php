@@ -4,6 +4,7 @@ namespace Star\GameEngine\Component\Card;
 
 use PHPUnit\Framework\TestCase;
 use Star\GameEngine\Component\Card\Prototyping\Value\StringValue;
+use Star\GameEngine\Component\Card\Shuffling\ReverseOrder;
 
 final class DeckOfCardTest extends TestCase
 {
@@ -26,11 +27,11 @@ final class DeckOfCardTest extends TestCase
 
         $this->deck = new DeckOfCard(
             'deck-name',
-            $template->buildCard(['name' => self::FIRST_CARD]),
-            $template->buildCard(['name' => self::SECOND_CARD]),
-            $template->buildCard(['name' => self::THIRD_CARD]),
-            $template->buildCard(['name' => self::FOURTH_CARD]),
             $template->buildCard(['name' => self::LAST_CARD]),
+            $template->buildCard(['name' => self::FOURTH_CARD]),
+            $template->buildCard(['name' => self::THIRD_CARD]),
+            $template->buildCard(['name' => self::SECOND_CARD]),
+            $template->buildCard(['name' => self::FIRST_CARD]),
         );
     }
 
@@ -86,6 +87,30 @@ final class DeckOfCardTest extends TestCase
             ->willReturnOnConsecutiveCalls(false, true);
 
         $this->deck->acceptDeckVisitor($visitor);
+    }
+
+    public function test_it_should_shuffle_deck(): void
+    {
+        $newDeck = $this->deck->shuffle(new ReverseOrder());
+
+        $this->assertSameCard(self::FIRST_CARD, $this->deck->drawTopCard());
+        $this->assertSameCard(self::SECOND_CARD, $this->deck->drawTopCard());
+        $this->assertSameCard(self::THIRD_CARD, $this->deck->drawTopCard());
+        $this->assertSameCard(self::FOURTH_CARD, $this->deck->drawTopCard());
+        $this->assertSameCard(self::LAST_CARD, $this->deck->drawTopCard());
+
+        $this->assertSameCard(self::LAST_CARD, $newDeck->drawTopCard());
+        $this->assertSameCard(self::FOURTH_CARD, $newDeck->drawTopCard());
+        $this->assertSameCard(self::THIRD_CARD, $newDeck->drawTopCard());
+        $this->assertSameCard(self::SECOND_CARD, $newDeck->drawTopCard());
+        $this->assertSameCard(self::FIRST_CARD, $newDeck->drawTopCard());
+    }
+
+    public function test_it_should_merge_deck_by_pushing_cards_at_bottom(): void
+    {
+        self::assertCount(5, $this->deck);
+        self::assertCount(10, $this->deck->merge($this->deck));
+        self::assertCount(5, $this->deck);
     }
 
     private function assertSameCard(string $name, Card $card): void
