@@ -8,7 +8,7 @@ use Star\GameEngine\Component\Card\Prototyping\VariableBuilder;
  * @internal This class is internal to the CardBuilder class.
  * @see CardBuilder
  */
-final class TextPlaceholder implements TemplatePlaceholder
+final class StringPlaceholder implements TemplatePlaceholder
 {
     /**
      * @var string

@@ -4,6 +4,7 @@ namespace Star\GameEngine\Component\Card\Prototyping\PlaceHolding;
 
 use Assert\Assert;
 use Assert\Assertion;
+use Star\GameEngine\Component\Card\Prototyping\Value\ChoiceValue;
 
 /**
  * @api
@@ -42,6 +43,11 @@ final class PlaceholderData
         return $value;
     }
 
+    public function getChoicesValue(string $key): ChoiceValue
+    {
+
+    }
+
     private function getMixedValue(string $key)
     {
         if (! $this->hasKey($key)) {
@@ -67,7 +73,7 @@ final class PlaceholderData
             ->all()
             ->notNull()
             ->scalar()
-            ;
+        ;
         return new self($data);
     }
 
