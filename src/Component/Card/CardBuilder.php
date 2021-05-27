@@ -8,7 +8,7 @@ use Star\GameEngine\Component\Card\Prototyping\MapOfBehaviors;
 use Star\GameEngine\Component\Card\Prototyping\MapOfVariables;
 use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\BooleanPlaceholder;
 use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\IntegerPlaceholder;
-use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\MixedChoicesPlaceholder;
+use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\ChoicesPlaceholder;
 use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\PlaceholderBuilder;
 use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\PlaceholderData;
 use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\TemplatePlaceholder;
@@ -16,9 +16,13 @@ use Star\GameEngine\Component\Card\Prototyping\PlaceHolding\StringPlaceholder;
 use Star\GameEngine\Component\Card\Prototyping\Type\BooleanType;
 use Star\GameEngine\Component\Card\Prototyping\Type\IntegerType;
 use Star\GameEngine\Component\Card\Prototyping\Type\ChoicesOfMixedType;
+use Star\GameEngine\Component\Card\Prototyping\Type\InvalidAuthorizedChoices;
 use Star\GameEngine\Component\Card\Prototyping\Type\StringType;
 use Star\GameEngine\Component\Card\Prototyping\Type\VariableType;
-use Star\GameEngine\Component\Card\Prototyping\Value\ChoiceValue;
+use Star\GameEngine\Component\Card\Prototyping\Value\BooleanValue;
+use Star\GameEngine\Component\Card\Prototyping\Value\ArrayOfValues;
+use Star\GameEngine\Component\Card\Prototyping\Value\IntegerValue;
+use Star\GameEngine\Component\Card\Prototyping\Value\StringValue;
 use Star\GameEngine\Component\Card\Prototyping\Value\VariableValue;
 use Star\GameEngine\Component\Card\Prototyping\VariableBuilder;
 use function array_merge;
@@ -62,7 +66,7 @@ final class CardBuilder
     public function withChoicesPlaceholder(string $name, array $availableOptions): PlaceholderBuilder
     {
         return $this->withPlaceholder(
-            new MixedChoicesPlaceholder($name, ChoiceValue::arrayOfUnknowns(...$availableOptions))
+            new ChoicesPlaceholder($name, ArrayOfValues::arrayOfUnknowns(...$availableOptions))
         );
     }
 
@@ -75,25 +79,40 @@ final class CardBuilder
 
     public function withTextVariable(string $name, string $value): self
     {
-        return $this->withVariable($name, new StringType(), $value);
+        return $this->withVariable($name, new StringType(), StringValue::fromString($value));
     }
 
     public function withIntegerVariable(string $name, int $value): self
     {
-        return $this->withVariable($name, new IntegerType(), (string) $value);
+        return $this->withVariable($name, new IntegerType(), IntegerValue::fromInt($value));
     }
 
     public function withBooleanVariable(string $name, bool $value): self
     {
-        return $this->withVariable($name, new BooleanType(), $value);
+        return $this->withVariable($name, new BooleanType(), BooleanValue::fromBoolean($value));
     }
 
-    public function withChoicesVariable(string $name, array $selectedOptions, array $availableOptions): self
-    {
-        return $this->withVariable($name, new ChoicesOfMixedType($availableOptions), $selectedOptions);
+    public function withChoicesVariable(
+        string $name,
+        array $selectedOptions,
+        array $availableOptions
+    ): self {
+        if (count($selectedOptions) === 0) {
+            throw new InvalidAuthorizedChoices('Cannot have empty selected options.');
+        }
+
+        if (count($availableOptions) === 0) {
+            throw new InvalidAuthorizedChoices('Cannot have empty available options.');
+        }
+
+        return $this->withVariable(
+            $name,
+            new ChoicesOfMixedType(ArrayOfValues::arrayOfUnknowns(...$availableOptions)),
+            ArrayOfValues::arrayOfUnknowns(...$selectedOptions)
+        );
     }
 
-    public function withVariable(string $name, VariableType $type, $value): self
+    private function withVariable(string $name, VariableType $type, VariableValue $value): self
     {
         $this->variables[] = new CardVariable($name, $type->createValueFromMixed($value));
 

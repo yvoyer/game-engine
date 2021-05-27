@@ -13,6 +13,9 @@ final class IntegerTypeTest extends TestCase
             ->withIntegerVariable('key', 123)
             ->buildCard();
 
-        self::assertSame('integer(123)', $card->getVariableValue('key')->toTypedString());
+        self::assertSame(
+            'integer(123)',
+            $card->getVariableValue('key')->toTypedString()
+        );
     }
 }

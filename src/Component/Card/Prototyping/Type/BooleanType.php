@@ -9,21 +9,10 @@ final class BooleanType implements VariableType
 {
     public function createValueFromMixed($value): VariableValue
     {
-        return $this->createValueFromBoolean($value);
-    }
+        if ($value instanceof BooleanValue) {
+            return $value;
+        }
 
-    public function createValueFromString(string $value): VariableValue
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
-    }
-
-    public function createValueFromInteger(int $value): VariableValue
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
-    }
-
-    public function createValueFromBoolean(bool $value): VariableValue
-    {
         return BooleanValue::fromBoolean($value);
     }
 }

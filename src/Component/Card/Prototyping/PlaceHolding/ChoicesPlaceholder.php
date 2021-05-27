@@ -2,10 +2,10 @@
 
 namespace Star\GameEngine\Component\Card\Prototyping\PlaceHolding;
 
-use Star\GameEngine\Component\Card\Prototyping\Value\ChoiceValue;
+use Star\GameEngine\Component\Card\Prototyping\Value\ArrayOfValues;
 use Star\GameEngine\Component\Card\Prototyping\VariableBuilder;
 
-final class MixedChoicesPlaceholder implements TemplatePlaceholder
+final class ChoicesPlaceholder implements TemplatePlaceholder
 {
     /**
      * @var string
@@ -17,7 +17,7 @@ final class MixedChoicesPlaceholder implements TemplatePlaceholder
      */
     private $authorizedValues;
 
-    public function __construct(string $name, ChoiceValue $authorizedValues)
+    public function __construct(string $name, ArrayOfValues $authorizedValues)
     {
         $this->name = $name;
         $this->authorizedValues = $authorizedValues;
@@ -26,7 +26,11 @@ final class MixedChoicesPlaceholder implements TemplatePlaceholder
     public function buildVariables(VariableBuilder $builder, PlaceholderData $data): array
     {
         return [
-            $builder->choicesVariable($this->name, $data->getChoicesValue($this->name), $this->authorizedValues),
+            $builder->choicesVariable(
+                $this->name,
+                $data->getChoicesValue($this->name),
+                $this->authorizedValues
+            ),
         ];
     }
 }

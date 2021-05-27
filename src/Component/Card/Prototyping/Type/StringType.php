@@ -13,21 +13,10 @@ final class StringType implements VariableType
 {
     public function createValueFromMixed($value): VariableValue
     {
-        return $this->createValueFromString($value);
-    }
+        if ($value instanceof StringValue) {
+            return $value;
+        }
 
-    public function createValueFromString(string $value): VariableValue
-    {
         return StringValue::fromString($value);
-    }
-
-    public function createValueFromInteger(int $value): VariableValue
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
-    }
-
-    public function createValueFromBoolean(bool $value): VariableValue
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
     }
 }

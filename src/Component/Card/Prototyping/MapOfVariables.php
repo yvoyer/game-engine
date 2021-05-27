@@ -5,6 +5,8 @@ namespace Star\GameEngine\Component\Card\Prototyping;
 use ArrayAccess;
 use Countable;
 use Star\GameEngine\Component\Card\CardVisitor;
+use function array_key_exists;
+use function sprintf;
 
 final class MapOfVariables implements Countable, ArrayAccess
 {
@@ -47,6 +49,12 @@ final class MapOfVariables implements Countable, ArrayAccess
 
     public function offsetGet($offset): CardVariable
     {
+        if (! array_key_exists($offset, $this->map)) {
+            throw new UndefinedVariable(
+                sprintf('Variable "%s" is not defined.', $offset)
+            );
+        }
+
         return $this->map[$offset];
     }
 

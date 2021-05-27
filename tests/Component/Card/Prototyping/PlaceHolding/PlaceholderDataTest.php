@@ -36,6 +36,14 @@ final class PlaceholderDataTest extends TestCase
         PlaceholderData::fromArray(['key' => 12.34])->getIntegerValue('key');
     }
 
+    public function test_it_should_accept_array(): void
+    {
+        self::assertSame(
+            '1;2;3',
+            PlaceholderData::fromArray(['key' => [1, 2, 3]])->getChoicesValue('key')->toString()
+        );
+    }
+
     /**
      * @param mixed $value
      * @param string $expected
@@ -52,8 +60,6 @@ final class PlaceholderDataTest extends TestCase
     {
         return [
             [null, 'Value "<NULL>" is null, but non null value was expected.'],
-            [[], 'Value "<ARRAY>" is not a scalar.'],
-            [(object) [], 'Value "stdClass" is not a scalar.'],
         ];
     }
 
@@ -82,5 +88,12 @@ final class PlaceholderDataTest extends TestCase
             'The placeholder with name "key", requires a value to be given in the data, "[]" given.'
         );
         PlaceholderData::noData()->getStringValue('key');
+    }
+
+    public function test_it_should_use_single_value_as_choice(): void
+    {
+        $data = PlaceholderData::fromArray(['key' => 'value']);
+
+        self::assertSame('choice(value)', $data->getChoicesValue('key')->toTypedString());
     }
 }

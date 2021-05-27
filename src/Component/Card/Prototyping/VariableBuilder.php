@@ -3,7 +3,10 @@
 namespace Star\GameEngine\Component\Card\Prototyping;
 
 use Star\GameEngine\Component\Card\Prototyping\Type;
-use Star\GameEngine\Component\Card\Prototyping\Value\ChoiceValue;
+use Star\GameEngine\Component\Card\Prototyping\Value\BooleanValue;
+use Star\GameEngine\Component\Card\Prototyping\Value\ArrayOfValues;
+use Star\GameEngine\Component\Card\Prototyping\Value\IntegerValue;
+use Star\GameEngine\Component\Card\Prototyping\Value\StringValue;
 
 /**
  * @api
@@ -12,23 +15,23 @@ final class VariableBuilder
 {
     public function textVariable(string $name, string $value): CardVariable
     {
-        return new CardVariable($name, (new Type\StringType())->createValueFromMixed($value));
+        return new CardVariable($name, StringValue::fromString($value));
     }
 
     public function integerVariable(string $name, int $value): CardVariable
     {
-        return new CardVariable($name, (new Type\IntegerType())->createValueFromInteger($value));
+        return new CardVariable($name, IntegerValue::fromInt($value));
     }
 
     public function booleanVariable(string $name, bool $value): CardVariable
     {
-        return new CardVariable($name, (new Type\BooleanType())->createValueFromBoolean($value));
+        return new CardVariable($name, BooleanValue::fromBoolean($value));
     }
 
     public function choicesVariable(
         string $name,
-        ChoiceValue $selectedOptions,
-        ChoiceValue $authorizedValues
+        ArrayOfValues $selectedOptions,
+        ArrayOfValues $authorizedValues
     ): CardVariable {
         return new CardVariable(
             $name,

@@ -10,22 +10,22 @@ final class ChoiceValueTest extends TestCase
 {
     public function test_it_should_build_from_unknown_as_string(): void
     {
-        $options = ChoiceValue::arrayOfUnknowns('one', 'two', 'three');
-        self::assertSame('array(one;two;three)', $options->toTypedString());
+        $options = ArrayOfValues::arrayOfUnknowns('one', 'two', 'three');
+        self::assertSame('choice(one;two;three)', $options->toTypedString());
         self::assertSame('one;two;three', $options->toString());
     }
 
     public function test_it_should_build_from_unknown_as_integer(): void
     {
-        $options = ChoiceValue::arrayOfUnknowns(1, 2, 3);
-        self::assertSame('array(1;2;3)', $options->toTypedString());
+        $options = ArrayOfValues::arrayOfUnknowns(1, 2, 3);
+        self::assertSame('choice(1;2;3)', $options->toTypedString());
         self::assertSame('1;2;3', $options->toString());
     }
 
     public function test_it_should_build_from_unknown_as_float(): void
     {
-        $options = ChoiceValue::arrayOfUnknowns(12.34, 56.78, 90.12);
-        self::assertSame('array(12.34;56.78;90.12)', $options->toTypedString());
+        $options = ArrayOfValues::arrayOfUnknowns(12.34, 56.78, 90.12);
+        self::assertSame('choice(12.34;56.78;90.12)', $options->toTypedString());
         self::assertSame('12.34;56.78;90.12', $options->toString());
     }
 
@@ -38,7 +38,7 @@ final class ChoiceValueTest extends TestCase
     {
         $this->expectException(InvalidAuthorizedChoices::class);
         $this->expectExceptionMessage(\sprintf('Choices with values of type "%s" are not supported yet.', $expected));
-        ChoiceValue::arrayOfUnknowns($value);
+        ArrayOfValues::arrayOfUnknowns($value);
     }
 
     public static function provideNotSupportedValues(): array
@@ -51,5 +51,15 @@ final class ChoiceValueTest extends TestCase
             [null, 'NULL'],
             [function () {}, 'Closure'],
         ];
+    }
+
+    public function test_it_should_check_whether_the_value_is_contained(): void
+    {
+        $original = ArrayOfValues::arrayOfStrings('one', 'two', 'three');
+        self::assertTrue($original->contains(ArrayOfValues::arrayOfStrings('one')));
+        self::assertTrue($original->contains(ArrayOfValues::arrayOfStrings('one', 'two')));
+        self::assertTrue($original->contains(ArrayOfValues::arrayOfStrings('two', 'one')));
+        self::assertTrue($original->contains(ArrayOfValues::arrayOfStrings('one', 'three')));
+        self::assertFalse($original->contains(ArrayOfValues::arrayOfStrings('one', 'four')));
     }
 }

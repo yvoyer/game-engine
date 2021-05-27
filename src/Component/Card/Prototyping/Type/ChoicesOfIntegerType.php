@@ -10,19 +10,4 @@ final class ChoicesOfIntegerType implements VariableType
     {
         throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
     }
-
-    public function createValueFromString(string $value): VariableValue
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
-    }
-
-    public function createValueFromInteger(int $value): VariableValue
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
-    }
-
-    public function createValueFromBoolean(bool $value): VariableValue
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
-    }
 }

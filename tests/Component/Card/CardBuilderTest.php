@@ -3,6 +3,7 @@
 namespace Star\GameEngine\Component\Card;
 
 use PHPUnit\Framework\TestCase;
+use Star\GameEngine\Component\Card\Prototyping\UndefinedVariable;
 use Star\GameEngine\Component\Card\Reading\CardReader;
 
 final class CardBuilderTest extends TestCase
@@ -16,5 +17,14 @@ final class CardBuilderTest extends TestCase
 
         self::assertCount(0, $reader->getVariables());
         self::assertCount(0, $reader->getBehaviors());
+    }
+
+    public function test_it_should_throw_exception_when_variable_not_defined(): void
+    {
+        $builder = CardBuilder::create()->buildCard();
+
+        $this->expectException(UndefinedVariable::class);
+        $this->expectExceptionMessage('Variable "var" is not defined.');
+        $builder->getVariableValue('var');
     }
 }

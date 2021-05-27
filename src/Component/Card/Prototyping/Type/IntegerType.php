@@ -15,23 +15,11 @@ final class IntegerType implements VariableType
 {
     public function createValueFromMixed($value): VariableValue
     {
+        if ($value instanceof IntegerValue) {
+            $value = $value->toString();
+        }
         Assertion::integerish($value);
 
-        return $this->createValueFromInteger((int) $value);
-    }
-
-    public function createValueFromString(string $value): VariableValue
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
-    }
-
-    public function createValueFromInteger(int $value): VariableValue
-    {
-        return IntegerValue::fromInt($value);
-    }
-
-    public function createValueFromBoolean(bool $value): VariableValue
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+        return IntegerValue::fromInt((int) $value);
     }
 }

@@ -2,9 +2,10 @@
 
 namespace Star\GameEngine\Component\Card\Prototyping\PlaceHolding;
 
-use Assert\Assert;
 use Assert\Assertion;
-use Star\GameEngine\Component\Card\Prototyping\Value\ChoiceValue;
+use Star\GameEngine\Component\Card\Prototyping\Value\ArrayOfValues;
+use function array_key_exists;
+use function json_encode;
 
 /**
  * @api
@@ -43,9 +44,11 @@ final class PlaceholderData
         return $value;
     }
 
-    public function getChoicesValue(string $key): ChoiceValue
+    public function getChoicesValue(string $key): ArrayOfValues
     {
+        $value = (array) $this->getMixedValue($key);
 
+        return ArrayOfValues::arrayOfUnknowns(...$value);
     }
 
     private function getMixedValue(string $key)
@@ -59,21 +62,18 @@ final class PlaceholderData
 
     private function hasKey(string $key): bool
     {
-        return \array_key_exists($key, $this->data);
+        return array_key_exists($key, $this->data);
     }
 
     private function toJson(): string
     {
-        return \json_encode($this->data);
+        return json_encode($this->data);
     }
 
     public static function fromArray(array $data): self
     {
-        Assert::that($data)
-            ->all()
-            ->notNull()
-            ->scalar()
-        ;
+        Assertion::allNotNull($data);
+
         return new self($data);
     }
 

@@ -3,6 +3,7 @@
 namespace Star\GameEngine\Component\Card\Prototyping\Value;
 
 use Star\GameEngine\Component\Card\CardVisitor;
+use Star\GameEngine\NotAllowedMethodCall;
 use function sprintf;
 
 final class StringValue implements VariableValue
@@ -17,9 +18,24 @@ final class StringValue implements VariableValue
         $this->value = $value;
     }
 
-    public function toTypedString(): string
+    public function acceptCardVisitor(string $name, CardVisitor $visitor): void
     {
-        return sprintf('string(%s)', $this->value);
+        $visitor->visitTextVariable($name, $this);
+    }
+
+    public function acceptValueVisitor(ValueVisitor $visitor): void
+    {
+        $visitor->visitStringValue($this->value);
+    }
+
+    public function isList(): bool
+    {
+        return false;
+    }
+
+    public function toList(): array
+    {
+        throw new NotAllowedMethodCall(__METHOD__, 'variable is string');
     }
 
     public function toString(): string
@@ -27,13 +43,13 @@ final class StringValue implements VariableValue
         return $this->value;
     }
 
+    public function toTypedString(): string
+    {
+        return sprintf('string(%s)', $this->value);
+    }
+
     public static function fromString(string $value): self
     {
         return new self($value);
-    }
-
-    public function acceptCardVisitor(string $name, CardVisitor $visitor): void
-    {
-        $visitor->visitTextVariable($name, $this);
     }
 }
