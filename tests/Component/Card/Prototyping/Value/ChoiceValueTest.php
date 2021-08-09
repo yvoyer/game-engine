@@ -49,7 +49,11 @@ final class ChoiceValueTest extends TestCase
             [true, 'boolean'],
             [false, 'boolean'],
             [null, 'NULL'],
-            [function () {}, 'Closure'],
+            [
+                function () {
+                },
+                'Closure',
+            ],
         ];
     }
 

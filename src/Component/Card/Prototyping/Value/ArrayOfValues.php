@@ -19,12 +19,12 @@ final class ArrayOfValues implements VariableValue
     /**
      * @var VariableValue[]
      */
-    private $choices;
+    private array $choices;
 
     /**
      * @var null|array
      */
-    private $cached_map;
+    private ?array $cached_map;
 
     private function __construct(VariableValue ...$choices)
     {
@@ -53,7 +53,7 @@ final class ArrayOfValues implements VariableValue
     public function toList(): array
     {
         $this->acceptValueVisitor($visitor = new class implements ValueVisitor {
-            public $values = [];
+            public array $values = [];
 
             public function visitBooleanValue(bool $value): void
             {
@@ -112,7 +112,8 @@ final class ArrayOfValues implements VariableValue
         ) === 0;
     }
 
-    private function comparableArray(): array {
+    private function comparableArray(): array
+    {
         if (! $this->cached_map) {
             $this->cached_map = [];
             foreach ($this->choices as $value) {
@@ -141,8 +142,8 @@ final class ArrayOfValues implements VariableValue
 
     public static function arrayOfIntegers(int $first, int ...$others): self
     {
-        return new self(...
-            array_map(
+        return new self(
+            ...array_map(
                 function (int $value): IntegerValue {
                     return IntegerValue::fromInt($value);
                 },
@@ -153,8 +154,8 @@ final class ArrayOfValues implements VariableValue
 
     public static function arrayOfFloats(float $first, float ...$others): self
     {
-        return new self(...
-            array_map(
+        return new self(
+            ...array_map(
                 function (float $value): StringValue {
                     return StringValue::fromString((string) $value);
                 },
@@ -165,8 +166,8 @@ final class ArrayOfValues implements VariableValue
 
     public static function arrayOfStrings(string $first, string ...$others): self
     {
-        return new self(...
-            array_map(
+        return new self(
+            ...array_map(
                 function (string $value): StringValue {
                     return StringValue::fromString($value);
                 },
